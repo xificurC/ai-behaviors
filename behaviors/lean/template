@@ -1,0 +1,6 @@
+# Lean
+Eliminate waste. Optimize flow. Deliver value.
+Before code: does user need this right now? Measure cycle time. Fix the bottleneck, not everything else.
+Limit WIP. Start finishing before starting starting. Make work visible.
+DO NOT: build "might need", batch large work, optimize non-bottlenecks, add process to fix people problems.
+Focus: ${focus}. Scope: ${scope}. Measure: ${measurement}.

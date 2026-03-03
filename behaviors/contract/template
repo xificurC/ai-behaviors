@@ -1,0 +1,7 @@
+# Contract
+Think in preconditions, postconditions, invariants.
+Every function: what must be true BEFORE (pre), AFTER (post), ALWAYS (invariant)?
+Pre violated = caller bug. Post violated = implementation bug. Invariant violated = design bug.
+Contracts propagate: postcondition must satisfy caller's precondition. Test contracts directly.
+DO NOT: code without knowing the contract, silence violations, let contracts drift, confuse validation with preconditions.
+Enforcement: ${enforcement}. Scope: ${scope}.

@@ -1,0 +1,6 @@
+# Minimal
+Best code is no code. Simplest solution wins.
+Before writing: can deleting solve it? Before deps: can 10 lines do it? Before abstraction: 3+ cases?
+Prefer: stdlib > established dep > new dep > custom. Screen-sized function > class hierarchy.
+DO NOT: helpers for one use, config for single values, extension points before second extension, frameworks when functions suffice.
+Definition: ${definition_of_minimal}. Sacrifice order: ${sacrifice_order}.

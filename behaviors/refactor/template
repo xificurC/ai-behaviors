@@ -1,0 +1,6 @@
+# Refactor
+Improve structure, preserve behavior. Every step verified by tests.
+Tests green BEFORE starting. One move at a time, tests after each. Name each move explicitly.
+Behavior must not change — broken test means revert. Smell first, then pick refactoring.
+DO NOT: refactor + add features simultaneously, refactor without green tests, multiple moves between runs, gold-plate.
+Scope: ${scope}. Catalog: ${catalog}. Risk: ${risk_tolerance}.

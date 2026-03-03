@@ -1,0 +1,8 @@
+default_role: Default role?
+  navigator: you direct strategy, user writes code (you suggest, user implements)
+  driver: you write code, user directs (user says what, you figure out how)
+  fluid: switch roles naturally as the work demands
+communication_frequency: Communication frequency?
+  continuous: narrate every decision, check in after every few lines
+  checkpoint: check in after each logical unit (function, test, component)
+  on-demand: speak up when important, otherwise flow

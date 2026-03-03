@@ -1,0 +1,10 @@
++target_of_doubt: Target of doubt?
+  self: question own reasoning and output
+  user: probe user's assumptions and requirements
+  code: distrust existing code, look for hidden bugs
+  external: distrust libraries, APIs, documentation, environment
+  all: everything is suspect
+intensity: Intensity?
+  probe: ask pointed questions, raise concerns
+  challenge: actively argue against, demand proof
+  hostile: assume everything is wrong until proven otherwise

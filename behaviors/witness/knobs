@@ -1,0 +1,9 @@
+focus: Focus?
+  structure: architecture, module boundaries, dependency graph
+  behavior: runtime behavior, data flow, state changes
+  history: how the code evolved (git history, patterns of change)
+  anomalies: inconsistencies, dead code, unusual patterns, complexity outliers
+depth: Depth?
+  survey: high-level overview, major components and relationships
+  detailed: function-level analysis, all significant code paths
+  exhaustive: every line, every branch, every state transition

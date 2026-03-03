@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLAUDE_DIR="$HOME/.claude"
+HOOKS_DIR="$CLAUDE_DIR/hooks"
+SETTINGS="$CLAUDE_DIR/settings.json"
+
+echo "Installing claude-behaviors hook"
+
+mkdir -p "$HOOKS_DIR" "$CLAUDE_DIR/behaviors"
+
+# --- Symlink hook ---
+ln -sf "$REPO_DIR/hooks/inject-behaviors.sh" "$HOOKS_DIR/inject-behaviors.sh"
+echo "  symlinked: inject-behaviors.sh → $HOOKS_DIR/"
+
+# --- Register hook in settings.json ---
+if [ ! -f "$SETTINGS" ]; then
+  cat > "$SETTINGS" <<'EOF'
+{
+  "hooks": {}
+}
+EOF
+fi
+
+inject_cmd="$HOOKS_DIR/inject-behaviors.sh"
+if ! grep -q "inject-behaviors.sh" "$SETTINGS" 2>/dev/null; then
+  tmp=$(mktemp)
+  jq --arg cmd "$inject_cmd" '
+    .hooks //= {} |
+    .hooks.UserPromptSubmit //= [] |
+    .hooks.UserPromptSubmit += [{"hooks": [{"type": "command", "command": $cmd, "timeout": 5}]}]
+  ' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
+  echo "  registered: inject-behaviors.sh in settings.json"
+else
+  echo "  already registered: inject-behaviors.sh"
+fi
+
+echo ""
+echo "Done. Now configure behaviors:"
+echo "  cd $REPO_DIR && ./behaviors/configure --list"
+echo "  cd $REPO_DIR && ./behaviors/configure tdd"
+echo ""
+echo "Then use #hashtags in Claude Code prompts."

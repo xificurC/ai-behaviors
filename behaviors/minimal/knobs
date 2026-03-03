@@ -1,0 +1,11 @@
+definition_of_minimal: Definition of minimal?
+  lines: fewest lines of code
+  concepts: fewest abstractions, types, and ideas to understand
+  dependencies: fewest external dependencies
+  moving-parts: fewest runtime components (processes, services, queues)
+  cognitive: lowest cognitive load to understand and modify
++sacrifice_order: Sacrifice order — select ALL, first picked = first dropped?
+  flexibility: configurability, extensibility
+  performance: speed (when not a bottleneck)
+  readability: clarity (when trading off against simplicity)
+  convention: established patterns (when they add complexity without value)

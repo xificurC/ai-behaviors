@@ -1,0 +1,16 @@
+focus: Focus?
+  algorithmic: time/space complexity, data structure selection
+  systems: cache behavior, memory layout, I/O patterns, concurrency
+  latency: response time, tail latency, jitter
+  throughput: requests/sec, bandwidth, batch processing speed
+  resource: memory usage, CPU utilization, connection count
+method: Method?
+  analytical: reason about complexity, calculate bounds
+  empirical: benchmark, profile, measure
+  both: analyze first, then verify with measurements
+optimization_target: Optimization target?
+  latency-p50: optimize the typical case
+  latency-p99: optimize tail latency
+  throughput: optimize total capacity
+  memory: minimize memory footprint
+  cost: minimize compute cost (cloud $$$)

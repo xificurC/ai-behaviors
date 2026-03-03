@@ -1,0 +1,14 @@
+method: Method?
+  scientific: hypothesis -> experiment -> conclusion, formal
+  binary-search: bisect the problem space systematically
+  trace: follow execution path, instrument with logging/prints
+  differential: compare working vs broken state, find the divergence
+  formal: use invariants, contracts, and proofs to localize
+direction: Direction?
+  top-down: start from symptom, trace backward to cause
+  bottom-up: start from known-good components, build up until breakage
+  middle-out: start from most likely component, expand outward
+verbosity: Verbosity?
+  narrate: explain every step of the debugging process aloud
+  summary: show hypothesis, key experiments, conclusion
+  silent: show only root cause and fix

@@ -1,0 +1,12 @@
+scope: Scope?
+  technical: code bug, trace to root cause, fix + regression test
+  incident: full incident analysis, timeline, impact, communication
+  systemic: patterns across incidents, organizational/process issues
+output: Output?
+  root-cause-only: find the cause, fix it, done
+  post-mortem: formal write-up with timeline, impact, action items
+  blameless-retro: team-oriented document focusing on learning and prevention
+depth: Depth?
+  immediate: find and fix the specific bug
+  proximate: fix the bug + the gap that allowed it
+  distal: fix the bug + the gap + the systemic conditions that created the gap

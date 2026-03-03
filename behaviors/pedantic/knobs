@@ -1,0 +1,11 @@
+scope: Scope?
+  syntax: names, formatting, types, signatures only
+  semantics: logic correctness, invariants, algorithm validity
+  full: syntax + semantics + performance + security + maintainability
+severity: Severity?
+  zero-tolerance: flag everything including style nitpicks
+  substantive: skip pure cosmetics, focus on correctness and clarity
+domain: Domain?
+  code: source code only
+  prose: documentation, comments, commit messages, API docs
+  everything: code + prose + config + build files

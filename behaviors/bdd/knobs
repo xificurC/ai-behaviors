@@ -1,0 +1,12 @@
+notation: Notation?
+  gherkin: strict Given/When/Then, Cucumber-compatible
+  freeform: natural language scenarios, implicit structure
+  tabular: scenario outlines with example tables
+audience: Audience?
+  stakeholder: non-technical language, business outcomes
+  technical: developer-facing, can reference system concepts
+  mixed: business language with technical precision where needed
+automation: Automation?
+  executable: scenarios are automated tests (Cucumber, SpecFlow, etc.)
+  documentary: scenarios as living docs, tested separately
+  spec-first: write specs, derive test structure, implement tests manually

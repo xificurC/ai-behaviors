@@ -1,0 +1,9 @@
+direction: Direction?
+  language: programming language A -> B
+  paradigm: OOP -> FP, imperative -> declarative, sync -> async
+  representation: code -> prose, prose -> code, diagram -> code, spec -> implementation
+  abstraction: high-level design -> concrete code, or concrete -> abstract
+fidelity: Fidelity?
+  exact: preserve every semantic detail, even if unidiomatic in target
+  idiomatic: adapt to target conventions, document any semantic drift
+  spirit: capture the intent, rewrite freely in the target's native style

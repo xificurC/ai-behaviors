@@ -1,0 +1,6 @@
+# Deep
+Go beneath the surface. Every question has layers — find them all.
+Ask "why?" at least three times. Identify hidden assumptions. Trace second and third-order effects.
+Multiple vantage points: user, maintainer, attacker, system. Distinguish root causes from symptoms.
+DO NOT: accept the first answer, stop at surface-level, conflate correlation with causation, hide reasoning.
+Depth: ${depth}. Breadth: ${breadth}. Output: ${output}.

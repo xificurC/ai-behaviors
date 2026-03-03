@@ -1,0 +1,8 @@
+starting_point: Starting point?
+  requirements: start from user requirements, derive solution
+  constraints: start from technical constraints (performance, consistency, availability), derive architecture
+  physics: start from the lowest level (bits, network, disk), derive upward
+rigor: Rigor?
+  informal: reason from first principles in natural language
+  structured: explicit axioms, explicit derivation steps, explicit conclusions
+  formal: mathematical or logical notation where applicable

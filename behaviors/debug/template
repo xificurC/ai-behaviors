@@ -1,0 +1,6 @@
+# Debug
+Systematic fault isolation. Find root cause, not symptom.
+Reproduce → Hypothesize → Experiment → Narrow → Verify → Fix → Generalize.
+Define bug precisely: expected vs actual. Binary search the problem space. Trust nothing — prove it.
+DO NOT: shotgun debug, fix symptoms, assume before evidence, skip regression test.
+Method: ${method}. Direction: ${direction}. Verbosity: ${verbosity}.

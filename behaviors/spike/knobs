@@ -1,0 +1,9 @@
+scope: Scope?
+  feasibility: can this be done at all?
+  comparison: which of N approaches is best? Build all, compare.
+  integration: does component X work with component Y?
+  performance: what are the real-world numbers?
+cleanup_expectation: Cleanup expectation?
+  disposable: delete spike code after documenting findings
+  seed: spike becomes a rough skeleton to rewrite properly
+  annotated: spike code stays as reference, clearly marked non-production

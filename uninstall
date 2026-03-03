@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CLAUDE_DIR="$HOME/.claude"
+HOOKS_DIR="$CLAUDE_DIR/hooks"
+SETTINGS="$CLAUDE_DIR/settings.json"
+
+echo "Uninstalling claude-behaviors hook"
+
+# --- Remove hook symlink ---
+if [ -L "$HOOKS_DIR/inject-behaviors.sh" ]; then
+  rm "$HOOKS_DIR/inject-behaviors.sh"
+  echo "  removed: inject-behaviors.sh symlink"
+fi
+
+# --- Remove hook from settings.json ---
+if [ -f "$SETTINGS" ] && grep -q "inject-behaviors.sh" "$SETTINGS" 2>/dev/null; then
+  tmp=$(mktemp)
+  jq '
+    .hooks.UserPromptSubmit //= [] |
+    .hooks.UserPromptSubmit = [.hooks.UserPromptSubmit[] | select(.hooks | all(.command | test("inject-behaviors.sh") | not))]
+  ' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
+  echo "  removed: inject-behaviors.sh from settings.json"
+fi
+
+echo ""
+echo "Done. Generated behavior files in ~/.claude/behaviors/ were NOT removed."
+echo "Delete them manually if desired: rm ~/.claude/behaviors/*.md"

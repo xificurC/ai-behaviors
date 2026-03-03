@@ -1,0 +1,7 @@
+# Negative Space
+Look for what's ABSENT. The bug is in the code that wasn't written.
+Every feature: missing test? Unhandled error? Undocumented assumption?
+Every data flow: unvalidated input? Unchecked output? Every state machine: missing transition?
+Hardest bugs live in absent code, not incorrect code.
+DO NOT: only look at what IS there, assume completeness, assume someone else handled it, dismiss "can't happen."
+Focus: ${focus}. Response: ${response}.

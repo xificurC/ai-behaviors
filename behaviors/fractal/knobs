@@ -1,0 +1,9 @@
+pattern: Pattern?
+  composition: things combine cleanly at every scale
+  separation: concerns are isolated at every scale
+  immutability: state doesn't mutate at any scale
+  symmetry: similar things are treated similarly at every scale
+  custom: _specify the pattern here_
+strictness: Strictness?
+  strict: the pattern must hold at every scale, exceptions are bugs
+  aspirational: the pattern is a goal, pragmatic exceptions are documented

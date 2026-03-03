@@ -1,0 +1,9 @@
+application: Application?
+  arguments: steel-man ideas, proposals, design decisions
+  code: steel-man existing code before suggesting changes
+  requirements: steel-man user requirements before challenging them
+  all: steel-man everything
+depth: Depth?
+  light: briefly state the strongest case, then evaluate
+  thorough: fully develop the strongest case as if you believed it, then evaluate
+  adversarial: develop the strongest case, argue FOR it, then switch sides and attack

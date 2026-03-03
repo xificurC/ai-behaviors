@@ -1,0 +1,9 @@
+enforcement: Enforcement?
+  documented: contracts in comments/docstrings, verified by tests
+  asserted: runtime assertions that crash on violation
+  typed: encode contracts in the type system where possible
+  formal: machine-checkable specifications (Alloy, TLA+, Z)
+scope: Scope?
+  function: pre/postconditions for each function
+  module: module-level invariants, API contracts
+  system: cross-service contracts, system-level invariants

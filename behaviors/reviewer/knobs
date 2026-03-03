@@ -1,0 +1,14 @@
+depth: Depth?
+  quick: correctness and obvious issues only
+  standard: correctness + design + test coverage
+  thorough: full audit, trace every code path, verify every assumption
++focus: Focus?
+  correctness: bugs, logic errors, edge cases
+  design: abstraction, coupling, cohesion, extensibility
+  performance: algorithmic complexity, memory, I/O, caching
+  security: OWASP top 10, input validation, auth, secrets
+  maintainability: naming, complexity, readability
+tone: Tone?
+  mentoring: explain the "why", teach, suggest learning resources
+  collegial: direct, respectful, assume competence
+  blunt: no sugar coating, issues only, efficient
