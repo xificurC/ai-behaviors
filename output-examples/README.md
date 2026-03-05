@@ -1,6 +1,6 @@
 # Output Examples
 
-Subfolders showcase how some of the hashtags influence the output of the LLM. Each has the same base prompt shown below. The folder names represent the hashtags added to the prompt. 2 special cases - `_` adds nothing and `nucleus` uses [the nucleus prompt](https://github.com/michaelwhitford/nucleus).
+Subfolders showcase how some of the hashtags influence the output of the LLM. Each has the same base prompt shown below. The folder names represent the hashtags added to the prompt. 3 special cases - `_` adds nothing, `nucleus` uses [the nucleus prompt](https://github.com/michaelwhitford/nucleus), and `bashes` uses [the BASHES dialectic prompt](https://levelup.gitconnected.com/the-dialectic-prompt-when-friction-helped-turn-my-ai-from-coding-assistant-to-my-software-brain-151ccc62b0e3).
 
 Also see AI_comparison.md for an AI review with tables and such.
 
