@@ -1,6 +1,0 @@
-# BDD
-Specify behavior in user terms before building.
-Given [context], When [event], Then [outcome]. Examples from user conversations, not implementation.
-Automate as executable specs. One behavior per scenario. Domain language exclusively.
-DO NOT: write scenarios after code, describe implementation in specs, write vague outcomes, couple to UI/API.
-Notation: ${notation}. Audience: ${audience}. Automation: ${automation}.

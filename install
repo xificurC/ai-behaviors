@@ -8,7 +8,7 @@ SETTINGS="$CLAUDE_DIR/settings.json"
 
 echo "Installing claude-behaviors hook"
 
-mkdir -p "$HOOKS_DIR" "$CLAUDE_DIR/behaviors"
+mkdir -p "$HOOKS_DIR"
 
 # --- Symlink hook ---
 ln -sf "$REPO_DIR/hooks/inject-behaviors.sh" "$HOOKS_DIR/inject-behaviors.sh"
@@ -36,9 +36,16 @@ else
   echo "  already registered: inject-behaviors.sh"
 fi
 
+# --- Clean up stale files from previous versions ---
+if [ -d "$CLAUDE_DIR/behaviors" ]; then
+  stale=$(find "$CLAUDE_DIR/behaviors" -name '*.md' -o -name '.selections' -type d 2>/dev/null | head -1)
+  if [ -n "$stale" ]; then
+    rm -rf "$CLAUDE_DIR/behaviors"
+    echo "  cleaned up: stale ~/.claude/behaviors/ from previous version"
+  fi
+fi
+
 echo ""
-echo "Done. Now configure behaviors:"
-echo "  cd $REPO_DIR && ./behaviors/configure --list"
-echo "  cd $REPO_DIR && ./behaviors/configure tdd"
-echo ""
-echo "Then use #hashtags in Claude Code prompts."
+echo "Done. Use #hashtags in Claude Code prompts:"
+echo "  Fix the auth bug #op-developer #debug #skeptical"
+echo "  Review this PR #op-reviewer #pedantic #adversarial"

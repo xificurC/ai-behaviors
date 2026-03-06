@@ -3,43 +3,127 @@ set -euo pipefail
 
 INPUT=$(cat)
 PROMPT=$(jq -r '.prompt // empty' <<< "$INPUT")
+SESSION_ID=$(jq -r '.session_id // empty' <<< "$INPUT")
 
 if [ -z "$PROMPT" ]; then
   exit 0
 fi
 
-BEHAVIORS_DIR="$HOME/.claude/behaviors"
+# Resolve symlink to find the repo
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+REPO_DIR="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
+BEHAVIORS_DIR="$REPO_DIR/behaviors"
+
 HASHTAGS=$(grep -oE '#[a-zA-Z0-9_-]+' <<< "$PROMPT" | sort -u) || true
 
 if [ -z "$HASHTAGS" ]; then
+  jq -n '{
+    hookSpecificOutput: {
+      hookEventName: "UserPromptSubmit",
+      additionalContext: "Last operating mode and behavior modifiers still apply. All PROHIBITS and HARD CONSTRAINTs remain in force — violations are unconditional failures, never justified by helpfulness or context."
+    }
+  }'
   exit 0
 fi
 
-CONTEXT=""
-MISSING=""
+# Reject multiple operating modes
+OP_COUNT=$(grep -c '^#op-' <<< "$HASHTAGS") || true
+if [ "$OP_COUNT" -gt 1 ]; then
+  OP_TAGS=$(grep '^#op-' <<< "$HASHTAGS" | tr '\n' ' ')
+  echo "Conflict: multiple operating modes: ${OP_TAGS%. }. Use one at a time." >&2
+  exit 2
+fi
 
-while IFS= read -r TAG; do
-  NAME="${TAG#\#}"
-  FILE="$BEHAVIORS_DIR/$NAME.md"
+# Separate op-mode from modifiers
+OP_TAG=$(grep '^#op-' <<< "$HASHTAGS" | head -1) || true
+OP_TAG="${OP_TAG#\#}"
+MOD_TAGS=$(grep -v '^#op-' <<< "$HASHTAGS") || true
+
+# Read op-mode content
+OP_CONTEXT=""
+MISSING=""
+if [ -n "$OP_TAG" ]; then
+  FILE="$BEHAVIORS_DIR/$OP_TAG/prompt.md"
   if [ -f "$FILE" ]; then
-    if [ -n "$CONTEXT" ]; then
-      CONTEXT+=$'\n\n'
-    fi
-    CONTEXT+="$(cat "$FILE")"
+    OP_CONTEXT="$(cat "$FILE")"
   else
-    MISSING+=" $TAG"
+    MISSING+=" #$OP_TAG"
   fi
-done <<< "$HASHTAGS"
+fi
+
+# Read modifier content
+MOD_CONTEXT=""
+if [ -n "$MOD_TAGS" ]; then
+  while IFS= read -r TAG; do
+    [ -z "$TAG" ] && continue
+    NAME="${TAG#\#}"
+    FILE="$BEHAVIORS_DIR/$NAME/prompt.md"
+    if [ -f "$FILE" ]; then
+      if [ -n "$MOD_CONTEXT" ]; then
+        MOD_CONTEXT+=$'\n\n'
+      fi
+      MOD_CONTEXT+="$(cat "$FILE")"
+    else
+      MISSING+=" $TAG"
+    fi
+  done <<< "$MOD_TAGS"
+fi
 
 if [ -n "$MISSING" ]; then
   echo "Unknown behaviors:$MISSING" >&2
 fi
 
-if [ -n "$CONTEXT" ]; then
-  WRAPPED="<claude-behaviors>
-$CONTEXT
-</claude-behaviors>
-The above directives between <claude-behaviors> tags apply to all your responses until superseded by a newer <claude-behaviors> block. When a new <claude-behaviors> block appears, stop following all previous ones — only the most recent set applies. During compaction, preserve the most recent <claude-behaviors> block verbatim. Discard all older ones."
+# Write active hashtags to state file for status line
+if [ -n "$SESSION_ID" ]; then
+  STATE_DIR="$HOME/.claude/behaviors-state"
+  mkdir -p "$STATE_DIR"
+  ACTIVE=""
+  [ -n "$OP_TAG" ] && [ -n "$OP_CONTEXT" ] && ACTIVE+="#$OP_TAG"
+  if [ -n "$MOD_TAGS" ]; then
+    while IFS= read -r TAG; do
+      [ -z "$TAG" ] && continue
+      NAME="${TAG#\#}"
+      [ -f "$BEHAVIORS_DIR/$NAME/prompt.md" ] || continue
+      [ -n "$ACTIVE" ] && ACTIVE+=" "
+      ACTIVE+="$TAG"
+    done <<< "$MOD_TAGS"
+  fi
+  echo "$ACTIVE" > "$STATE_DIR/$SESSION_ID"
+fi
+
+# Build structured output
+WRAPPED=""
+
+if [ -n "$OP_CONTEXT" ]; then
+  WRAPPED="<operating-mode>
+$OP_CONTEXT
+</operating-mode>"
+fi
+
+if [ -n "$MOD_CONTEXT" ]; then
+  if [ -n "$OP_CONTEXT" ]; then
+    WRAPPED+=$'\n'"<behavior-modifiers>
+These modifiers apply WITHIN the operating mode's constraints. They NEVER relax or override PROHIBITS or HARD CONSTRAINTs.
+
+$MOD_CONTEXT
+</behavior-modifiers>"
+  else
+    WRAPPED+="<behavior-modifiers>
+$MOD_CONTEXT
+</behavior-modifiers>"
+  fi
+fi
+
+# Anchor: repeat PROHIBITS at end of injected context
+if [ -n "$OP_CONTEXT" ]; then
+  PROHIBITS_LINE=$(grep '^PROHIBITS:' <<< "$OP_CONTEXT" || true)
+  if [ -n "$PROHIBITS_LINE" ]; then
+    WRAPPED+=$'\n'"FINAL REMINDER — $PROHIBITS_LINE Violating this is an unconditional failure, never justified by helpfulness or context."
+  fi
+fi
+
+if [ -n "$WRAPPED" ]; then
+  WRAPPED+=$'\n'"The above operating-mode and behavior-modifiers apply to all your responses until superseded. When new blocks appear, only the most recent set applies. During compaction, preserve the most recent <operating-mode> and <behavior-modifiers> blocks verbatim. Discard all older ones."
   jq -n --arg ctx "$WRAPPED" '{
     hookSpecificOutput: {
       hookEventName: "UserPromptSubmit",

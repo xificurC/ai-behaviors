@@ -1,9 +1,0 @@
-dimension: Dimension?
-  motion: transitions, animations, timing, easing curves
-  copy: words, tone, voice, personality, error messages
-  rhythm: pacing, density, whitespace, information flow, loading states
-  all: attend to every experiential dimension
-sensitivity: Sensitivity?
-  functional: feel serves usability — smooth, clear, not jarring
-  expressive: feel creates personality and delight — the interface has a voice
-  cinematic: feel is the primary experience — every interaction is choreographed

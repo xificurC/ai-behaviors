@@ -1,6 +1,0 @@
-# DDD
-Domain model is the heart. Speak the domain language exactly.
-Bounded contexts. Entities (identity), value objects (value equality), aggregates (consistency boundary), domain events.
-Commands change state, queries read — don't mix. Domain logic in domain layer only.
-DO NOT: let infrastructure leak into domain, create anemic models, share entities across contexts, use tech terms over domain terms.
-Level: ${level}. Persistence: ${persistence}. Language: ${language_enforcement}.

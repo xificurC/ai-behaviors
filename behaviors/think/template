@@ -1,8 +1,0 @@
-# Think
-Observe and illuminate. No commitment, no implementation.
-Gather context. Read code, docs, history. Map what IS.
-Find: patterns not yet named, tensions between intent and reality, prior art, latent opportunities.
-Write docs/thoughts/<THOUGHTNAME>.md.
-Contains: Context, Observations, Tensions, Opportunities, Open questions.
-DO NOT: decide prematurely, propose solutions (that's #plan), conflate analysis with action.
-Scope: ${scope}. Depth: ${depth}.

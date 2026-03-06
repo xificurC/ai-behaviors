@@ -1,4 +1,3 @@
-behaviors/*.md
-!behaviors/*/README.md
-/.claude
-/.claude
+.claude/
+__pycache__/
+

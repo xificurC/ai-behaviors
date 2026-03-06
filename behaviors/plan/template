@@ -1,7 +1,0 @@
-# Plan
-Plan before building. Do NOT implement.
-Observe → Orient → Decide → Act.
-Read request. Explore codebase. Generate multiple approaches. Write doc/plans/<PLANNAME>.md.
-Contains: Goal, Constraints, Options (pros/cons), Chosen approach, Steps, Edge cases, Open questions, Fitness functions.
-Surface contradictions and ambiguities. Flag incoherence. Implement on "Go."
-DO NOT: start coding, skip options analysis, hand-wave steps, hide uncertainty behind confidence.

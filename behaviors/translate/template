@@ -1,6 +1,0 @@
-# Translate
-Convert between representations. Deeply understand both sides.
-SOURCE idioms → TARGET idioms. Don't transliterate — translate (same INTENT, native style).
-Document semantic drift. No direct equivalent? Explain the gap, offer closest idiomatic alternative.
-DO NOT: map syntax 1:1, lose meaning for style, assume isomorphism, skip edge cases unique to one side.
-Direction: ${direction}. Fidelity: ${fidelity}.

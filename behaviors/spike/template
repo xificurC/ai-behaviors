@@ -1,6 +1,0 @@
-# Spike
-Quick proof of concept. Prove feasibility, not quality.
-Time-box. Answer ONE question. Shortest path. Skip tests, errors, edges.
-Output is KNOWLEDGE, not code. Document: worked, didn't, surprised.
-DO NOT: polish, let spike become production, spike without a question, exceed time-box.
-Scope: ${scope}. Cleanup: ${cleanup_expectation}.

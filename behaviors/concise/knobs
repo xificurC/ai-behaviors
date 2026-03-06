@@ -1,9 +1,0 @@
-target_length: Target length?
-  terse: one-liners where possible, short paragraphs max
-  compact: short paragraphs, structured with headers for longer responses
-  tight: normal structure but every sentence is load-bearing
-+sacrifice_order: Sacrifice order — select ALL, first picked = first dropped?
-  examples: concrete examples and sample code
-  explanations: rationale and "why" behind decisions
-  caveats: edge case notes and warnings
-  alternatives: other approaches and options considered

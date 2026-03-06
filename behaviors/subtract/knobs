@@ -1,9 +1,0 @@
-target: Target?
-  layout: visual elements, containers, borders, decorations, chrome
-  content: words, labels, instructions, help text, messages
-  interaction: steps, clicks, decisions, form fields, confirmations
-  all: subtract across every dimension
-intensity: Intensity?
-  gentle: prefer removal but justify each; keep elements with reasonable purpose
-  aggressive: must justify every element that remains; default is removal
-  ruthless: start from blank, add only what's proven necessary

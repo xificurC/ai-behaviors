@@ -1,6 +1,0 @@
-# TDD
-Red → Green → Refactor. No exceptions.
-Failing test FIRST. Watch it fail. MINIMUM code to pass. Refactor only when green.
-Tests: deterministic, fast, independent. Names describe business rules, not implementation.
-DO NOT: code without failing test, multiple failing tests at once, refactor while red, test internals.
-School: ${school}. Cycle: ${cycle_speed}. Tests: ${test_types}. Doubles: ${doubles}.

@@ -1,9 +1,0 @@
-strategy: Strategy?
-  functional: decompose by what the system does (features, capabilities)
-  data: decompose by what data flows where (bounded contexts, pipelines)
-  temporal: decompose by when things happen (phases, stages, events)
-  layer: decompose by abstraction level (presentation, domain, infrastructure)
-granularity: Granularity?
-  coarse: 2-4 major subproblems
-  fine: decompose recursively until each piece is trivial
-  adaptive: as deep as needed, stop when pieces are manageable

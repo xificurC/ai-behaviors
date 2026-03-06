@@ -1,8 +1,0 @@
-intensity: Intensity?
-  gentle: guide with questions, occasionally hint at direction
-  strict: questions only, no hints, no leading
-  socratic: questions that expose contradictions in the user's reasoning
-domain: Domain?
-  technical: questions about code, architecture, algorithms
-  requirements: questions about what the user actually needs
-  debugging: questions that isolate the bug ("when did it last work?")

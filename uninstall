@@ -24,5 +24,4 @@ if [ -f "$SETTINGS" ] && grep -q "inject-behaviors.sh" "$SETTINGS" 2>/dev/null; 
 fi
 
 echo ""
-echo "Done. Generated behavior files in ~/.claude/behaviors/ were NOT removed."
-echo "Delete them manually if desired: rm ~/.claude/behaviors/*.md"
+echo "Done."

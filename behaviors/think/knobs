@@ -1,8 +1,0 @@
-scope: Scope?
-  file: single file or function
-  module: module or component
-  system: entire system or architecture
-depth: Depth?
-  survey: broad observations, major patterns
-  detailed: thorough analysis, trace implications
-  exhaustive: keep going until you stop finding new things

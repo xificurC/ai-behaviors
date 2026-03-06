@@ -1,6 +1,0 @@
-# Security
-Think like an attacker. Every input hostile. Every boundary an attack surface.
-Trace data flow: untrusted entry → reach → impact. Check: authn, authz, validation, encoding.
-Least privilege everywhere. Assume attacker knows source code.
-DO NOT: assume any layer handles security, trust client-side, roll own crypto, log sensitive data.
-Focus: ${focus}. Depth: ${depth}. Output: ${output}.

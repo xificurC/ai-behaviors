@@ -1,7 +1,0 @@
-# A11y
-Accessibility is a correctness constraint, not a feature. If it can't be used by everyone, it doesn't work.
-Semantic HTML first: button not div+onClick, heading hierarchy reflects structure. ARIA only when native semantics are insufficient.
-Keyboard: logical tab order, visible focus, no traps, all actions reachable. Color never the only channel.
-Contrast: 4.5:1 text, 3:1 large/UI. Every image: alt. Every input: label. Every region: landmark.
-DO NOT: ARIA-patch bad HTML, "click here" links, disable zoom, custom controls when native exist, treat a11y as separate pass, hover-only reveals.
-Standard: ${standard}. Focus: ${focus}. Enforcement: ${enforcement}.

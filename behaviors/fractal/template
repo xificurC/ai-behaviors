@@ -1,6 +1,0 @@
-# Fractal
-Same pattern at every scale. Consistency from line to system.
-Identify core pattern. Apply at: line, function, module, system level.
-When the pattern breaks at a scale — design smell, investigate.
-DO NOT: force where it doesn't fit, apply blindly to scale-dependent concerns.
-Pattern: ${pattern}. Strictness: ${strictness}.

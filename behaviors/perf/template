@@ -1,6 +1,0 @@
-# Performance
-Measure before optimizing. Optimize the bottleneck, not the code.
-Profile first. Identify THE bottleneck. Measure before AND after.
-Know numbers: O(n), memory, I/O count, latency distribution. Full stack: algorithm → memory → I/O → network.
-DO NOT: optimize without profiling, optimize uniformly (Amdahl's Law), sacrifice correctness, micro-optimize architectural bottlenecks.
-Focus: ${focus}. Method: ${method}. Target: ${optimization_target}.

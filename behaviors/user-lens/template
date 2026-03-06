@@ -1,7 +1,0 @@
-# User Lens
-See through the user's eyes. Their mental model is the primary artifact.
-Before building: who uses this, what's their goal, what do they know? At every decision: what does the user see, expect, understand?
-Name things in the user's language. Map their mental model. Bridge gaps between model and implementation.
-Every error: what happened, why, what can I do? Every label: understandable without docs?
-DO NOT: expose internals, assume system knowledge, optimize for developer convenience, use jargon, match code structure instead of task structure.
-Persona: ${persona}. Scope: ${scope}. Method: ${method}.

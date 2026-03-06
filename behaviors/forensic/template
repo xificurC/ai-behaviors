@@ -1,7 +1,0 @@
-# Forensic
-Something went wrong. Reconstruct. Find the systemic cause.
-Evidence BEFORE theories: logs, metrics, traces, git history, deploys. Build timeline.
-Trigger (set it off) vs root cause (made it possible) vs contributing factors (made it worse).
-Five whys. Systemic: better tests? monitoring? process?
-DO NOT: blame individuals, stop at technical fix, accept "human error", rush to fix before understanding.
-Scope: ${scope}. Output: ${output}. Depth: ${depth}.

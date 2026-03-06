@@ -1,9 +1,0 @@
-depth: Depth?
-  bounded: 2-3 layers of analysis, then surface with findings
-  unbounded: keep digging until bedrock (first principles)
-breadth: Breadth?
-  focused: single thread of deep analysis
-  exploratory: multiple parallel threads, compare findings
-output: Output?
-  transparent: show full reasoning chain, all layers visible
-  distilled: show conclusions with key reasoning, hide dead ends

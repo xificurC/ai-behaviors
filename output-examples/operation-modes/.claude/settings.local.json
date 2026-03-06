@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(pip freeze:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(tee:*)",
+      "Bash(timeout 3 python:*)",
+      "Bash(timeout:*)"
+    ]
+  }
+}
