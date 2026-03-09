@@ -36,16 +36,7 @@ else
   echo "  already registered: inject-behaviors.sh"
 fi
 
-# --- Clean up stale files from previous versions ---
-if [ -d "$CLAUDE_DIR/behaviors" ]; then
-  stale=$(find "$CLAUDE_DIR/behaviors" -name '*.md' -o -name '.selections' -type d 2>/dev/null | head -1)
-  if [ -n "$stale" ]; then
-    rm -rf "$CLAUDE_DIR/behaviors"
-    echo "  cleaned up: stale ~/.claude/behaviors/ from previous version"
-  fi
-fi
-
 echo ""
 echo "Done. Use #hashtags in Claude Code prompts:"
-echo "  Fix the auth bug #op-developer #debug #skeptical"
-echo "  Review this PR #op-reviewer #pedantic #adversarial"
+echo "  Fix the auth bug #op-code #challenge"
+echo "  Review this PR #op-review #deep #challenge"
