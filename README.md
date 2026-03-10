@@ -83,6 +83,11 @@ Techniques add a specific cognitive method. Each is orthogonal to the qualities 
 | `#fractal`   | Scale variation     | Apply at every scale — macro, meso, micro                |
 | `#tdd`       | Test-driven cycle   | Red → green → refactor, one behavior at a time           |
 | `#io`        | IO boundaries       | Pure core, impure shell — own every side effect          |
+| `#invariant` | Correctness criteria| State what must hold, verify after every change          |
+| `#backward`  | Reverse reasoning   | Start from end state, derive preconditions               |
+| `#analogy`   | Structural transfer | Map structure from solved domains to unsolved ones       |
+| `#temporal`  | Ordering analysis   | Consider all orderings, find the ones that break         |
+| `#name`      | Naming precision    | If you can't name it precisely, the abstraction is wrong |
 
 ## Composition
 
@@ -103,6 +108,11 @@ One mode + any qualities/techniques: `#op-code #deep #subtract`
 | `#op-assess #wide`                     | Observe broadly without prescribing              |
 | `#op-test #challenge #simulate`        | Adversarial testing with mental execution traces |
 | `#op-debug #deep #simulate`            | Deep debugging, trace exact execution state      |
+| `#op-debug #backward`                  | Start from error, reason backward to cause       |
+| `#op-code #invariant`                  | State invariants, verify every change preserves  |
+| `#op-code #name`                       | Precise naming, challenge every vague label      |
+| `#op-spec #analogy`                    | Find structural analogs before designing         |
+| `#op-review #temporal`                 | Review for race conditions and ordering bugs     |
 | `#op-mentor #deep #first-principles`   | Teach from fundamentals, trace to axioms         |
 | `#op-probe #challenge`                 | Hard questioning, expose contradictions          |
 | `#op-research #deep #wide`             | Investigate deeply and broadly                   |
