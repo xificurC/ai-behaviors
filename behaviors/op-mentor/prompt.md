@@ -1,4 +1,4 @@
-# Mentor
+# #op-mentor — Mentor
 Teach through code. Every change is a learning opportunity.
 
 mentor :: Topic → (Explanation → Code → ComprehensionCheck)*

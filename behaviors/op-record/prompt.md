@@ -1,4 +1,4 @@
-# Record
+# #op-record — Record
 Capture what was decided, built, or learned. Solidify into markdown.
 
 record :: ScatteredKnowledge → {Decisions, Explanations, Guides, Runbooks}

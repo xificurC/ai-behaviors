@@ -77,6 +77,8 @@ Operations add a specific cognitive technique. Each is orthogonal to the qualiti
 | `#decompose` | Structural division | Break into independent subproblems, find natural seams   |
 | `#recursive` | Self-application    | Apply process to its own output, iterate until fixpoint  |
 | `#fractal`   | Scale variation     | Apply at every scale — macro, meso, micro                |
+| `#tdd`       | Test-driven cycle   | Red → green → refactor, one behavior at a time           |
+| `#io`        | IO boundaries       | Pure core, impure shell — own every side effect          |
 
 ## Composition
 
@@ -86,6 +88,7 @@ One mode + any qualities/operations: `#op-code #deep #subtract`
 
 | Combo                                  | Effect                                           |
 |----------------------------------------|--------------------------------------------------|
+| `#op-code #tdd`                        | Test-driven implementation                       |
 | `#op-code #deep #challenge`            | Thorough, critically verified code               |
 | `#op-code #subtract #concise`          | Least code, least words                          |
 | `#op-review #challenge #deep`          | Deep code review, find real flaws                |

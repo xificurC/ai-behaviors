@@ -16,13 +16,23 @@ BEHAVIORS_DIR="$REPO_DIR/behaviors"
 
 HASHTAGS=$(grep -oE '#[a-zA-Z0-9_-]+' <<< "$PROMPT" | sort -u) || true
 
+# State file for persistence across prompts
+STATE_DIR="$HOME/.claude/behaviors-state"
+STATE_FILE=""
+if [ -n "$SESSION_ID" ]; then
+  STATE_FILE="$STATE_DIR/$SESSION_ID"
+fi
+
 if [ -z "$HASHTAGS" ]; then
-  jq -n '{
-    hookSpecificOutput: {
-      hookEventName: "UserPromptSubmit",
-      additionalContext: "Last operating mode and behavior modifiers still apply. All HARD CONSTRAINTs remain in force."
-    }
-  }'
+  if [ -n "$STATE_FILE" ] && [ -f "$STATE_FILE" ] && [ -s "$STATE_FILE" ]; then
+    ACTIVE=$(cat "$STATE_FILE")
+    jq -n --arg active "$ACTIVE" '{
+      hookSpecificOutput: {
+        hookEventName: "UserPromptSubmit",
+        additionalContext: ("Active: " + $active + ". All HARD CONSTRAINTs remain in force.")
+      }
+    }'
+  fi
   exit 0
 fi
 
@@ -74,8 +84,7 @@ if [ -n "$MISSING" ]; then
 fi
 
 # Write active hashtags to state file for status line
-if [ -n "$SESSION_ID" ]; then
-  STATE_DIR="$HOME/.claude/behaviors-state"
+if [ -n "$STATE_FILE" ]; then
   mkdir -p "$STATE_DIR"
   ACTIVE=""
   [ -n "$OP_TAG" ] && [ -n "$OP_CONTEXT" ] && ACTIVE+="#$OP_TAG"
@@ -88,7 +97,7 @@ if [ -n "$SESSION_ID" ]; then
       ACTIVE+="$TAG"
     done <<< "$MOD_TAGS"
   fi
-  echo "$ACTIVE" > "$STATE_DIR/$SESSION_ID"
+  echo "$ACTIVE" > "$STATE_FILE"
 fi
 
 # Build structured output
@@ -114,13 +123,18 @@ $MOD_CONTEXT
   fi
 fi
 
-# Anchor: repeat constraint at end of injected context
+# Anchor: repeat constraints at end of injected context
+CONSTRAINTS=""
 if [ -n "$OP_CONTEXT" ]; then
-  CONSTRAINT_LINE=$(grep -- '-- HARD CONSTRAINT' <<< "$OP_CONTEXT" | head -1 || true)
-  if [ -n "$CONSTRAINT_LINE" ]; then
-    WRAPPED+=$'\n'"FINAL REMINDER — $CONSTRAINT_LINE"
-  fi
+  LINE=$(grep -- '-- HARD CONSTRAINT' <<< "$OP_CONTEXT" | head -1 || true)
+  [ -n "$LINE" ] && CONSTRAINTS+=$'\n'"FINAL REMINDER — $LINE"
 fi
+if [ -n "$MOD_CONTEXT" ]; then
+  while IFS= read -r LINE; do
+    [ -n "$LINE" ] && CONSTRAINTS+=$'\n'"FINAL REMINDER — $LINE"
+  done < <(grep -- '-- HARD CONSTRAINT' <<< "$MOD_CONTEXT" || true)
+fi
+[ -n "$CONSTRAINTS" ] && WRAPPED+="$CONSTRAINTS"
 
 # Add inline marking instruction when modifiers are active
 if [ -n "$MOD_CONTEXT" ]; then
