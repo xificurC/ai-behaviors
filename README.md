@@ -1,6 +1,6 @@
 # claude-behaviors
 
-Add `#hashtags` to any prompt. Use one **operating mode** (`#=*`) and any number of **qualities** or **techniques**:
+Add `#hashtags` to any prompt. Use one **operating mode** (`#=<mode-name>`) and any number of **qualities** or **techniques**:
 
 ```
 - Fix the auth bug #=debug #deep
@@ -25,8 +25,8 @@ Three dimensions: **modes** define the interaction contract, **qualities** modif
 
 Modes define the interaction contract — what Claude produces and what it will NOT do. Use one at a time.
 
-| Mode           | Use when                                   | Boundary                   |
-|----------------|--------------------------------------------|----------------------------|
+| Mode         | Use when                                   | Boundary                   |
+|--------------|--------------------------------------------|----------------------------|
 | `#=research` | You need facts, not opinions               | facts only                 |
 | `#=assess`   | You need interpretation                    | insight, not action        |
 | `#=spec`     | You need a plan or decision                | plans, not code            |
@@ -95,32 +95,32 @@ One mode + any qualities/techniques: `#=code #deep #subtract`
 
 ### Examples
 
-| Combo                                  | Effect                                           |
-|----------------------------------------|--------------------------------------------------|
-| `#=code #tdd`                        | Test-driven implementation                       |
-| `#=code #deep #challenge`            | Thorough, critically verified code               |
-| `#=code #subtract #concise`          | Least code, least words                          |
-| `#=review #challenge #deep`          | Deep code review, find real flaws                |
-| `#=review #steel-man`                | Appreciate what works, then find the flaws       |
-| `#=review #fractal`                  | Review at system, module, function, line level   |
-| `#=spec #deep #wide`                 | Spec-building that goes deep and surveys broadly |
-| `#=spec #decompose #first-principles`| Break the spec into derived subproblems          |
-| `#=assess #wide`                     | Observe broadly without prescribing              |
-| `#=test #challenge #simulate`        | Adversarial testing with mental execution traces |
-| `#=debug #deep #simulate`            | Deep debugging, trace exact execution state      |
-| `#=debug #backward`                  | Start from error, reason backward to cause       |
-| `#=code #invariant`                  | State invariants, verify every change preserves  |
-| `#=code #name`                       | Precise naming, challenge every vague label      |
-| `#=spec #analogy`                    | Find structural analogs before designing         |
-| `#=review #temporal`                 | Review for race conditions and ordering bugs     |
-| `#=mentor #deep #first-principles`   | Teach from fundamentals, trace to axioms         |
-| `#=probe #challenge`                 | Hard questioning, expose contradictions          |
-| `#=research #deep #wide`             | Investigate deeply and broadly                   |
-| `#=record #concise`                  | Terse documentation, minimum words               |
-| `#=navigate #wide #challenge`        | Direct strategy while surfacing risks            |
-| `#deep #challenge #steel-man`          | Dialectic: strengthen then attack, in depth      |
-| `#decompose #fractal`                  | Break apart at every scale                       |
-| `#recursive #challenge`                | Multi-pass self-critique until stable            |
+| Combo                                 | Effect                                           |
+|---------------------------------------|--------------------------------------------------|
+| `#=code #tdd`                         | Test-driven implementation                       |
+| `#=code #deep #challenge`             | Thorough, critically verified code               |
+| `#=code #subtract #concise`           | Least code, least words                          |
+| `#=review #challenge #deep`           | Deep code review, find real flaws                |
+| `#=review #steel-man`                 | Appreciate what works, then find the flaws       |
+| `#=review #fractal`                   | Review at system, module, function, line level   |
+| `#=spec #deep #wide`                  | Spec-building that goes deep and surveys broadly |
+| `#=spec #decompose #first-principles` | Break the spec into derived subproblems          |
+| `#=assess #wide`                      | Observe broadly without prescribing              |
+| `#=test #challenge #simulate`         | Adversarial testing with mental execution traces |
+| `#=debug #deep #simulate`             | Deep debugging, trace exact execution state      |
+| `#=debug #backward`                   | Start from error, reason backward to cause       |
+| `#=code #invariant`                   | State invariants, verify every change preserves  |
+| `#=code #name`                        | Precise naming, challenge every vague label      |
+| `#=spec #analogy`                     | Find structural analogs before designing         |
+| `#=review #temporal`                  | Review for race conditions and ordering bugs     |
+| `#=mentor #deep #first-principles`    | Teach from fundamentals, trace to axioms         |
+| `#=probe #challenge`                  | Hard questioning, expose contradictions          |
+| `#=research #deep #wide`              | Investigate deeply and broadly                   |
+| `#=record #concise`                   | Terse documentation, minimum words               |
+| `#=navigate #wide #challenge`         | Direct strategy while surfacing risks            |
+| `#deep #challenge #steel-man`         | Dialectic: strengthen then attack, in depth      |
+| `#decompose #fractal`                 | Break apart at every scale                       |
+| `#recursive #challenge`               | Multi-pass self-critique until stable            |
 
 ## Uninstall
 
@@ -145,18 +145,18 @@ See the output-examples folder on generated python snake games with various hash
 
 ## Relation to plan mode
 
-These behaviors work with or without Claude Code's built-in plan mode.
-
-**With plan mode:** Use hashtags to shape how Claude plans and implements. `#=spec #decompose` during planning; `#=code #deep` during implementation. Hashtags persist across the plan/implement boundary until you replace them. Note the weird interaction - accepting the plan will leave you in one of the planning modes, so they are not a perfect fit.
-
-**Instead of plan mode:** (This is what I do) The operating mode pipeline — research → assess → spec → code — offers more granular phase control than plan mode's binary plan/implement split. Each mode has an explicit boundary (research can't opine, assess can't propose, spec can't implement), so you control exactly when Claude shifts from thinking to building. Switch modes as you go:
+I don't use plan mode (I have a hook that disables it). The operating mode pipeline — research → assess → spec > code — offers more granular phase control than plan mode's binary plan/implement split. Each mode has an explicit boundary (research can't opine, assess can't propose, spec can't implement), so you control exactly when Claude shifts from thinking to building. You can also move up and down the modes, `#=record` it once fully specced etc.
 
 ```
-What are the options for caching here? #=research
-Ok, which approach fits best? #=assess
-Write up the approach #=spec
-Implement it #=code
+What are the options for caching here? #=research #=wide
+Ok, which approach fits best? #=assess #challenge
+I see, how does library X do it? #=research #deep
+Let's use approach A. Write up the approach #=spec #concise
+Record it in doc/spec #=record
+Implement it #=code #decompose #recursive
 ```
+
+That said, you can use plan mode, but I'd suggest not using an operating mode then. You lose the granularity of research → assess → spec but can still use qualities and techniques, e.g. `#deep #wide #fractal #decompose`.
 
 ## Structure
 
