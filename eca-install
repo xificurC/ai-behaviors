@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ECA_DIR="$HOME/.config/eca"
+HOOKS_DIR="$ECA_DIR/hooks"
+SETTINGS="$ECA_DIR/config.json"
+
+echo "Installing ai-behaviors hook"
+
+mkdir -p "$HOOKS_DIR"
+
+# --- Symlink hook ---
+ln -sf "$REPO_DIR/hooks/eca-inject-behaviors.sh" "$HOOKS_DIR/eca-inject-behaviors.sh"
+echo "  symlinked: eca-inject-behaviors.sh → $HOOKS_DIR/"
+
+# --- Register hook in config.json ---
+if [ ! -f "$SETTINGS" ]; then
+  cat > "$SETTINGS" <<'EOF'
+{
+  "hooks": {}
+}
+EOF
+fi
+
+if ! grep -q "eca-inject-behaviors.sh" "$SETTINGS" 2>/dev/null; then
+  tmp=$(mktemp)
+  jq '
+    .hooks //= {} |
+    .hooks."ai-behaviors" = {"type": "preRequest", "visible": "false", "actions": [{"type": "shell", "file": "hooks/eca-inject-behaviors.sh"}]}
+  ' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
+  echo "  registered: eca-inject-behaviors.sh in config.json"
+else
+  echo "  already registered: eca-inject-behaviors.sh"
+fi
+
+echo ""
+echo "Done. Use #hashtags in ECA prompts:"
+echo "  Fix the auth bug #=code #challenge"
+echo "  Review this PR #=review #deep #challenge"
