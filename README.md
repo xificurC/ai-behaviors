@@ -104,6 +104,7 @@ Techniques add a specific cognitive method. Each is orthogonal to the qualities 
 | `#analogy`   | Structural transfer | Map structure from solved domains to unsolved ones       |
 | `#temporal`  | Ordering analysis   | Consider all orderings, find the ones that break         |
 | `#name`      | Naming precision    | If you can't name it precisely, the abstraction is wrong |
+| `#checklist` | Scope tracking      | Track every spec item, force disposition, skip nothing   |
 
 ## Composition
 
@@ -144,6 +145,8 @@ One mode + any qualities/techniques: `#=code #deep #subtract`
 | `#=code #user-lens #name`             | Build from user's perspective, name in their language |
 | `#=review #deep #challenge #meta`     | Deep critical review that also audits its own framing |
 | `#=code #contract #tdd`               | Test-driven with explicit contracts per function |
+| `#=code #checklist`                   | Implement against a spec, track every item       |
+| `#=code #checklist #decompose`        | Break spec into parts, track each independently  |
 
 ## Uninstall
 
