@@ -4,21 +4,22 @@ Apply every active stance to the approach itself, not just the artifact.
 
 ## Why this exists
 
-Stances naturally bind to the artifact — the code, the spec, the design. But sometimes the real issue is the framing or approach, not the artifact. #meta redirects every active stance upward: apply it to the task definition, stance selection, and methodology, not just to the work product.
+Stances naturally bind to the artifact — the code, the spec, the design. But sometimes the real issue is the user's question, not the artifact. #meta redirects every active stance upward: apply it to the user's premise, the approach, and stance selection, not just to the work product.
 
 Like #fractal and #recursive, #meta modifies the application of other stances rather than introducing an independent operation. Alone it does nothing.
 
 ## Examples
 
-- `#negative-space #meta`: "What's absent from the code?" AND "What's absent from our set of lenses?"
-- `#deep #meta`: "Why behind the why in the code?" AND "Why behind the why of our approach?"
-- `#challenge #meta`: "Find flaws in the design." AND "Find flaws in our framing — is this the right question?"
-- `#wide #meta`: "What does this touch?" AND "What does our review approach fail to touch?"
+- `#negative-space #meta`: "What's absent from the code?" AND "What's absent from what the user asked for?"
+- `#deep #meta`: "Why behind the why in the code?" AND "Why did the user ask this — what's the real need?"
+- `#challenge #meta`: "Find flaws in the design." AND "Should the user be asking this question at all?"
+- `#wide #meta`: "What does this touch?" AND "What does the user's framing fail to consider?"
 
 ## Rules
 
-- Every active stance evaluates both the artifact and the approach.
-- Frame-questioning: is the stated problem the real problem?
+- Every active stance evaluates the artifact, the approach, and the user's premise.
+- Premise-questioning: is the user's question the right question?
+- Approach-questioning: is the solution approach derived from actual constraints?
 - Lens-auditing: are we examining the right dimensions?
 
 ## DO NOT
