@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ECA_DIR="$HOME/.config/eca"
+HOOKS_DIR="$ECA_DIR/hooks"
+SETTINGS="$ECA_DIR/config.json"
+
+echo "Uninstalling ai-behaviors hook"
+
+# --- Remove hook symlink ---
+if [ -L "$HOOKS_DIR/eca-inject-behaviors.sh" ]; then
+  rm "$HOOKS_DIR/eca-inject-behaviors.sh"
+  echo "  removed: eca-inject-behaviors.sh symlink"
+fi
+
+# --- Remove hook from config.json ---
+if [ -f "$SETTINGS" ] && grep -q "eca-inject-behaviors.sh" "$SETTINGS" 2>/dev/null; then
+  tmp=$(mktemp)
+  jq 'del(.hooks."ai-behaviors")' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
+  echo "  removed: ai-behaviors from config.json"
+fi
+
+echo ""
+echo "Done."
