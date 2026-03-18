@@ -284,6 +284,71 @@ STDERR=$(cat "$STDERR_FILE")
 assert_contains "$OUT" "<behavior-modifiers>" && \
   assert_not_contains "$STDERR" "Unknown behaviors" && pass
 
+# === Word boundary (S2) ===
+
+echo ""
+echo "Word boundary:"
+
+run_test "hashtag_in_url_not_captured"
+OUT=$(invoke "see https://example.com#deep for info" | context_of)
+assert_empty "$OUT"
+
+run_test "hashtag_after_space_captured"
+OUT=$(invoke "do stuff #deep" | context_of)
+assert_contains "$OUT" "<behavior-modifiers>" && pass
+
+run_test "hashtag_at_start_of_prompt_captured"
+OUT=$(invoke "#deep do stuff" | context_of)
+assert_contains "$OUT" "<behavior-modifiers>" && pass
+
+# === Order preservation (S3) ===
+
+echo ""
+echo "Order preservation:"
+
+run_test "modifier_order_preserved_in_state"
+invoke "do stuff #wide #deep #challenge" >/dev/null
+STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
+assert_eq "$STATE" "#wide #deep #challenge" && pass
+
+run_test "mode_first_then_modifiers_in_order"
+invoke "do stuff #wide #=code #deep" >/dev/null
+STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
+assert_eq "$STATE" "#=code #wide #deep" && pass
+
+# === CLEAR (S7) ===
+
+echo ""
+echo "CLEAR:"
+
+run_test "clear_empties_state"
+invoke "do stuff #=code #deep" >/dev/null
+invoke "#CLEAR" >/dev/null
+STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
+assert_eq "$STATE" "" && pass
+
+run_test "clear_produces_no_output"
+invoke "do stuff #=code #deep" >/dev/null
+OUT=$(invoke "#CLEAR")
+assert_empty "$OUT"
+
+run_test "clear_with_other_hashtags_exits_2"
+invoke "#CLEAR #deep" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
+STDERR=$(cat "$STDERR_FILE")
+assert_contains "$STDERR" "#CLEAR" && \
+  assert_eq "$EXIT_CODE" "2" && pass
+
+run_test "continuation_after_clear_produces_no_output"
+invoke "do stuff #=code #deep" >/dev/null
+invoke "#CLEAR" >/dev/null
+OUT=$(invoke "next question")
+assert_empty "$OUT"
+
+run_test "lowercase_clear_not_treated_as_clear"
+OUT=$(invoke "#clear" 2>/dev/null | context_of)
+STDERR=$(cat "$STDERR_FILE")
+assert_contains "$STDERR" "Unknown behaviors" && pass
+
 # === Summary ===
 
 echo ""

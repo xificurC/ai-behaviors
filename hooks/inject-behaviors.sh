@@ -10,8 +10,13 @@ if [ -z "$PROMPT" ]; then
   exit 0
 fi
 
-# Resolve symlink to find the repo
-SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+# Resolve symlink to find the repo (portable, no readlink -f)
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [ -L "$SCRIPT_PATH" ]; do
+  SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+  SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+  [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+done
 REPO_DIR="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
 BEHAVIORS_DIR="$REPO_DIR/behaviors"
 
@@ -32,7 +37,7 @@ resolve_behavior() {
   fi
 }
 
-HASHTAGS=$(grep -oE '#[=a-zA-Z0-9_-]+' <<< "$PROMPT" | sort -u) || true
+HASHTAGS=$(grep -oE '(^|[[:space:]])#[=a-zA-Z0-9_-]+' <<< "$PROMPT" | sed 's/^[[:space:]]//' | awk '!seen[$0]++') || true
 
 # State file for persistence across prompts
 STATE_DIR="$HOME/.claude/behaviors-state"
@@ -64,6 +69,20 @@ if [ -z "$HASHTAGS" ]; then
         additionalContext: ("Active: " + $active + ". HARD CONSTRAINTs in force:" + $constraints + $marking)
       }
     }'
+  fi
+  exit 0
+fi
+
+# Handle #CLEAR
+if grep -q '^#CLEAR$' <<< "$HASHTAGS"; then
+  OTHER=$(grep -v '^#CLEAR$' <<< "$HASHTAGS" | grep -c '.' || true)
+  if [ "$OTHER" -gt 0 ]; then
+    echo "Conflict: #CLEAR cannot be combined with other behaviors." >&2
+    exit 2
+  fi
+  if [ -n "$STATE_FILE" ]; then
+    mkdir -p "$STATE_DIR"
+    : > "$STATE_FILE"
   fi
   exit 0
 fi
