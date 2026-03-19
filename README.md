@@ -188,9 +188,10 @@ See the output-examples folder on generated python snake games with various fram
 
 1. `UserPromptSubmit` hook extracts `#hashtags` from your prompt
 2. Resolves its symlink to find the repo
-3. Reads `behaviors/<name>/prompt.md` for each hashtag
-4. Injects the content as ephemeral additional context
-5. The LLM follows the directives until the next prompt with hashtags replaces them
+3. For each hashtag: if a `compose` file exists, recursively expands the composite to leaf behaviors
+4. Reads `behaviors/<name>/prompt.md` for each leaf behavior (and composite custom text if present)
+5. Injects the content as ephemeral additional context
+6. The LLM follows the directives until the next prompt with hashtags replaces them
 
 ## Relation to plan mode
 
@@ -217,14 +218,46 @@ That said, you can use plan mode, but I'd suggest not using an operating mode th
 behaviors/
 ├── <behavior>/
 │   ├── README.md      # human docs: what, why, rules, common prompts
-│   └── prompt.md      # terse text injected into the LLM's context
+│   ├── prompt.md      # terse text injected into the LLM's context
+│   └── compose        # (composites only) hashtags this composite expands to
 hooks/
 └── inject-behaviors.sh
 ```
 
+## Composites
+
+A composite is a named composition of behaviors. Instead of typing `#=review #deep #challenge #simulate` every time, define it once:
+
+```
+mkdir behaviors/security-reviewer
+echo "#=review #deep #challenge #simulate" > behaviors/security-reviewer/compose
+```
+
+Now `#security-reviewer` expands to all four behaviors. Stacking works — `#security-reviewer #concise` adds `#concise` on top.
+
+**Custom text.** Add a `prompt.md` alongside `compose` for directives that only apply within this composite:
+
+```
+mkdir behaviors/security-reviewer
+echo "#=review #deep #challenge #simulate" > behaviors/security-reviewer/compose
+cat > behaviors/security-reviewer/prompt.md << 'EOF'
+# #security-reviewer — Security Reviewer
+Prioritize OWASP Top 10. Flag any use of unsafe or raw pointer manipulation.
+EOF
+```
+
+**Nesting.** Composites can compose other composites. `#EXPLAIN` shows the expansion tree.
+
+**Rules:**
+- Same namespace as behaviors — no special syntax
+- One operating mode after full expansion (same constraint as always)
+- `compose` file: single line of space-separated hashtags
+- State persists the composite name, not the expanded set
+- Cycle detection and depth limit (max 8) are enforced
+
 ## Custom behaviors
 
-Do you find yourself repeating how/what should the LLM do? Add your own hashtag by creating a directory under `behaviors/`:
+Add your own hashtag by creating a directory under `behaviors/`:
 
 ```
 mkdir behaviors/my-review-style
@@ -237,7 +270,7 @@ EOF
 
 Now `#my-review-style` works like any built-in behavior.
 
-To keep custom behaviors separate from upstream updates, either:
+To keep custom behaviors or composites separate from upstream updates, either:
 - prefix with `my-` and add `behaviors/my-*` to `.git/info/exclude`
 - or simply gitignore specific directories
 

@@ -429,6 +429,203 @@ STDERR=$(cat "$STDERR_FILE")
 assert_contains "$STDERR" "#CLEAR" && \
   assert_eq "$EXIT_CODE" "2" && pass
 
+# === Composite tests ===
+
+echo ""
+echo "Composite expansion:"
+
+# Setup test composite directories
+rm -rf "$LOCAL_PROJECT/.ai-behaviors"
+
+# Pure macro (T1)
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-macro"
+echo "#=code #deep" > "$LOCAL_PROJECT/.ai-behaviors/test-macro/compose"
+
+# Composite with custom text (T2)
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-custom"
+echo "#deep #challenge" > "$LOCAL_PROJECT/.ai-behaviors/test-custom/compose"
+cat > "$LOCAL_PROJECT/.ai-behaviors/test-custom/prompt.md" << 'EOF'
+# #test-custom — Test Custom Composite
+UNIQUE-CUSTOM-PERSONA-CONTENT-XYZ
+EOF
+
+# Nested (T3)
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-inner"
+echo "#=review #deep" > "$LOCAL_PROJECT/.ai-behaviors/test-inner/compose"
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-outer"
+echo "#test-inner #challenge" > "$LOCAL_PROJECT/.ai-behaviors/test-outer/compose"
+
+# Cycle (T4)
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-cycle-a"
+echo "#test-cycle-b" > "$LOCAL_PROJECT/.ai-behaviors/test-cycle-a/compose"
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-cycle-b"
+echo "#test-cycle-a" > "$LOCAL_PROJECT/.ai-behaviors/test-cycle-b/compose"
+
+# Deep nesting — 9 levels to exceed depth 8 (T5)
+for i in $(seq 1 9); do
+  mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-depth-$i"
+  if [ "$i" -lt 9 ]; then
+    echo "#test-depth-$((i+1))" > "$LOCAL_PROJECT/.ai-behaviors/test-depth-$i/compose"
+  else
+    echo "#deep" > "$LOCAL_PROJECT/.ai-behaviors/test-depth-$i/compose"
+  fi
+done
+
+# Unknown in compose (T6)
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-with-unknown"
+echo "#=code #nonexistent-xyz-test" > "$LOCAL_PROJECT/.ai-behaviors/test-with-unknown/compose"
+
+# Empty compose (T7)
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-empty-compose"
+touch "$LOCAL_PROJECT/.ai-behaviors/test-empty-compose/compose"
+
+# Mode-bearing composites for conflict tests (T10, T11)
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-mode-a"
+echo "#=code #deep" > "$LOCAL_PROJECT/.ai-behaviors/test-mode-a/compose"
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-mode-b"
+echo "#=review #challenge" > "$LOCAL_PROJECT/.ai-behaviors/test-mode-b/compose"
+
+# Composite with HARD CONSTRAINT in custom text (T14)
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-constrained"
+echo "#deep" > "$LOCAL_PROJECT/.ai-behaviors/test-constrained/compose"
+cat > "$LOCAL_PROJECT/.ai-behaviors/test-constrained/prompt.md" << 'EOF'
+# #test-constrained — Constrained Composite
+test-constrained :: always verify    -- HARD CONSTRAINT
+EOF
+
+# --- T1: Pure macro expands ---
+run_test "composite_pure_macro_expands"
+OUT=$(invoke "#test-macro" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<operating-mode>" && \
+  assert_contains "$OUT" "<behavior-modifiers>" && pass
+
+# --- T2: Custom text in modifiers alongside composed behaviors ---
+run_test "composite_custom_text_in_modifiers"
+OUT=$(invoke "#test-custom" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "UNIQUE-CUSTOM-PERSONA-CONTENT-XYZ" && \
+  assert_contains "$OUT" "Go beneath the surface" && \
+  assert_contains "$OUT" "counterargument" && pass
+
+# --- T3: Nested composite fully expands ---
+run_test "nested_composite_expands"
+OUT=$(invoke "#test-outer" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<operating-mode>" && \
+  assert_contains "$OUT" "<behavior-modifiers>" && pass
+
+# --- T4: Cycle detected ---
+run_test "composite_cycle_detected"
+invoke "#test-cycle-a" test-session "$LOCAL_PROJECT" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
+STDERR=$(cat "$STDERR_FILE")
+assert_contains "$STDERR" "Cycle" && \
+  assert_eq "$EXIT_CODE" "2" && pass
+
+# --- T5: Depth limit exceeded ---
+run_test "composite_depth_limit_exceeded"
+invoke "#test-depth-1" test-session "$LOCAL_PROJECT" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
+STDERR=$(cat "$STDERR_FILE")
+assert_contains "$STDERR" "depth" && \
+  assert_eq "$EXIT_CODE" "2" && pass
+
+# --- T6: Unknown in compose warns, expands known ---
+run_test "composite_unknown_in_compose_warns"
+OUT=$(invoke "#test-with-unknown" test-session "$LOCAL_PROJECT" | context_of)
+STDERR=$(cat "$STDERR_FILE")
+assert_contains "$OUT" "<operating-mode>" && \
+  assert_contains "$STDERR" "#nonexistent-xyz-test" && pass
+
+# --- T7: Empty compose errors ---
+run_test "composite_empty_compose_errors"
+invoke "#test-empty-compose" test-session "$LOCAL_PROJECT" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
+STDERR=$(cat "$STDERR_FILE")
+assert_contains "$STDERR" "Empty compose" && \
+  assert_eq "$EXIT_CODE" "2" && pass
+
+# --- T8: Stacking composite + extra modifier ---
+run_test "composite_stacked_with_extra_modifier"
+OUT=$(invoke "#test-macro #challenge" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<operating-mode>" && \
+  assert_contains "$OUT" "Write production code" && \
+  assert_contains "$OUT" "counterargument" && pass
+
+# --- T9: Duplicate deduplicated ---
+run_test "composite_duplicate_deduplicated"
+OUT=$(invoke "#test-macro #deep" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "Write production code" && \
+  COUNT=$(grep -o "Go beneath the surface" <<< "$OUT" | wc -l | tr -d ' ') && \
+  assert_eq "$COUNT" "1" && pass
+
+# --- T10: Composite mode + explicit mode = error ---
+run_test "composite_mode_plus_explicit_mode_errors"
+invoke "#test-mode-a #=review" test-session "$LOCAL_PROJECT" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
+STDERR=$(cat "$STDERR_FILE")
+assert_contains "$STDERR" "multiple operating modes" && \
+  assert_eq "$EXIT_CODE" "2" && pass
+
+# --- T11: Two mode composites = error ---
+run_test "two_mode_composites_error"
+invoke "#test-mode-a #test-mode-b" test-session "$LOCAL_PROJECT" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
+STDERR=$(cat "$STDERR_FILE")
+assert_contains "$STDERR" "multiple operating modes" && \
+  assert_eq "$EXIT_CODE" "2" && pass
+
+# --- T12: Composite with mode + extra modifiers = ok ---
+run_test "composite_mode_with_extra_modifiers_ok"
+OUT=$(invoke "#test-mode-a #challenge" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<operating-mode>" && \
+  assert_contains "$OUT" "Write production code" && \
+  assert_contains "$OUT" "counterargument" && pass
+
+# --- T13: State stores composite name, not expanded ---
+run_test "state_stores_composite_name"
+invoke "#test-macro #challenge" test-session "$LOCAL_PROJECT" >/dev/null
+STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
+assert_contains "$STATE" "#test-macro" && \
+  assert_contains "$STATE" "#challenge" && \
+  assert_not_contains "$STATE" "#=code" && \
+  assert_not_contains "$STATE" "#deep" && pass
+
+# --- T14: Continuation re-expands composite ---
+run_test "continuation_reexpands_composite"
+invoke "#test-constrained" test-session "$LOCAL_PROJECT" >/dev/null
+OUT=$(invoke "next question" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "Active: #test-constrained" && \
+  assert_contains "$OUT" "#test-constrained:" && \
+  assert_contains "$OUT" "#deep:" && pass
+
+# --- T15: EXPLAIN composite shows tree ---
+run_test "explain_composite_shows_tree"
+OUT=$(invoke "#EXPLAIN #test-outer" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<expansion-tree>" && \
+  assert_contains "$OUT" "#test-outer" && \
+  assert_contains "$OUT" "#test-inner" && pass
+
+# --- T16: EXPLAIN with active composite from state ---
+run_test "explain_active_composite_from_state"
+invoke "#test-macro" test-session "$LOCAL_PROJECT" >/dev/null
+OUT=$(invoke "#EXPLAIN" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<explain-instruction>" && \
+  assert_contains "$OUT" "<expansion-tree>" && pass
+
+# --- T19: Local composite overrides repo ---
+run_test "local_composite_overrides_repo"
+mkdir -p "$REPO_DIR/behaviors/test-override-zzz"
+echo "#deep" > "$REPO_DIR/behaviors/test-override-zzz/compose"
+echo "REPO-OVERRIDE-ZZZ" > "$REPO_DIR/behaviors/test-override-zzz/prompt.md"
+mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-override-zzz"
+echo "#deep" > "$LOCAL_PROJECT/.ai-behaviors/test-override-zzz/compose"
+echo "LOCAL-OVERRIDE-ZZZ" > "$LOCAL_PROJECT/.ai-behaviors/test-override-zzz/prompt.md"
+OUT=$(invoke "#test-override-zzz" test-session "$LOCAL_PROJECT" | context_of)
+rm -rf "$REPO_DIR/behaviors/test-override-zzz"
+assert_contains "$OUT" "LOCAL-OVERRIDE-ZZZ" && \
+  assert_not_contains "$OUT" "REPO-OVERRIDE-ZZZ" && \
+  assert_contains "$OUT" "Go beneath the surface" && pass
+
+# --- T20: Local composite composes repo behaviors ---
+run_test "local_composite_composes_repo_behaviors"
+OUT=$(invoke "#test-macro" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<operating-mode>" && \
+  assert_contains "$OUT" "<behavior-modifiers>" && pass
+
 # === Summary ===
 
 echo ""
