@@ -106,6 +106,7 @@ Techniques add a specific cognitive method. Each is orthogonal to the qualities 
 | `#temporal`  | Ordering analysis   | Consider all orderings, find the ones that break         |
 | `#name`      | Naming precision    | If you can't name it precisely, the abstraction is wrong |
 | `#checklist` | Scope tracking      | Track every spec item, force disposition, skip nothing   |
+| `#stop`      | Boundary discipline | Stop at gaps, report provenance, don't cross phases      |
 
 ### Output-Channel Modifiers
 
@@ -170,6 +171,9 @@ One mode + any qualities/techniques/modifiers: `#=code #deep #subtract`, `#=desi
 | `#=code #contract #tdd`               | Test-driven with explicit contracts per function |
 | `#=code #checklist`                   | Implement against a spec, track every item       |
 | `#=code #checklist #decompose`        | Break spec into parts, track each independently  |
+| `#=code #stop`                        | Implement, halt on any gap or surprise           |
+| `#=code #stop #checklist`             | Implement spec items, halt on gaps, track all    |
+| `#=debug #stop`                       | Diagnose bug, halt if cause is architectural     |
 
 ## Uninstall
 
@@ -205,7 +209,7 @@ I see, how does library X do it? #=research #deep
 Back to candidates #=design
 Let's go with approach B. Write it up #=spec #concise
 Record it in doc/spec #=record
-Implement it #=code #decompose #recursive
+Implement it #=code #stop #decompose
 ```
 
 Use `#file` to persist the pipeline to a shared artifact: `#=frame #file` starts a file that accumulates across modes, capturing decisions, rejections, and rationale. A new session can read the file and pick up where you left off.
