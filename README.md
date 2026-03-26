@@ -96,6 +96,7 @@ Techniques add a specific cognitive method. Each is orthogonal to the qualities 
 |--------------|---------------------|----------------------------------------------------------|
 | `#simulate`  | Mental execution    | Trace step by step, maintain exact state, flag anomalies |
 | `#decompose` | Structural division | Break into independent subproblems, find natural seams   |
+| `#factor`    | Dimensional analysis| Find independent dimensions, state value of each         |
 | `#recursive` | Self-application    | Apply process to its own output, iterate until fixpoint  |
 | `#fractal`   | Scale variation     | Apply at every scale — macro, meso, micro                |
 | `#tdd`       | Test-driven cycle   | Red → green → refactor, one behavior at a time           |
@@ -143,6 +144,9 @@ One mode + any qualities/techniques/modifiers: `#=code #deep #subtract`, `#=desi
 | `#=review #fractal`                   | Review at system, module, function, line level   |
 | `#=spec #deep #wide`                  | Spec-building that goes deep and surveys broadly |
 | `#=spec #decompose #first-principles` | Break the spec into derived subproblems          |
+| `#=frame #factor`                     | Scope the problem by identifying its independent dimensions |
+| `#=design #factor`                    | Evaluate candidates along independent axes                  |
+| `#=research #factor #deep`            | Investigate each dimension of the problem space in depth    |
 | `#=frame #challenge`                  | Stress-test the problem framing                  |
 | `#=design #deep #challenge`           | Deep candidate analysis, attack each option      |
 | `#=design #first-principles`          | Derive candidates from constraints, not patterns |
