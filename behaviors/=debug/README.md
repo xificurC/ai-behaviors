@@ -18,12 +18,13 @@ Debugging is a distinct activity from coding. The primary output is *understandi
 ## Process
 
 1. **Reproduce**: reliable, minimal reproduction case.
-2. **Hypothesize**: based on symptoms, list candidate causes.
-3. **Experiment**: design the fastest test to eliminate the most candidates.
-4. **Narrow**: repeat 2-3 until one candidate remains.
-5. **Verify**: confirm root cause. Explain the full causal chain.
-6. **Fix**: fix the cause, not the symptom. Add a regression test.
-7. **Generalize**: is this a class of bug? Are there other instances?
+2. **Bisect**: split the problem space, test which partition holds the fault, recurse into it.
+3. **Stop**: when the space is small enough to inspect directly.
+4. **Verify**: confirm root cause. Explain the full causal chain.
+5. **Fix**: fix the cause, not the symptom. Add a regression test.
+6. **Generalize**: is this a class of bug? Are there other instances?
+
+Experiment means execute and observe — reasoning alone is not evidence.
 
 ## Common prompts
 
@@ -31,3 +32,4 @@ Debugging is a distinct activity from coding. The primary output is *understandi
 - `#=debug #deep` — multi-layered root cause analysis
 - `#=debug #simulate` — trace execution step by step to find the fault
 - `#=debug #challenge` — leave no assumption unverified
+- `#=debug #factor` — map the fault space to independent dimensions, track elimination
