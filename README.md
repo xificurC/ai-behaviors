@@ -108,6 +108,7 @@ Techniques add a specific cognitive method. Each is orthogonal to the qualities 
 | `#name`      | Naming precision    | If you can't name it precisely, the abstraction is wrong |
 | `#checklist` | Scope tracking      | Track every spec item, force disposition, skip nothing   |
 | `#stop`      | Boundary discipline | Stop at gaps, report provenance, don't cross phases      |
+| `#langlang`  | Knowledge compilation | Compile knowledge into orthogonal artifact (IS/IS NOT)  |
 
 ### Output-Channel Modifiers
 
@@ -178,6 +179,8 @@ One mode + any qualities/techniques/modifiers: `#=code #deep #subtract`, `#=desi
 | `#=code #stop`                        | Implement, halt on any gap or surprise           |
 | `#=code #stop #checklist`             | Implement spec items, halt on gaps, track all    |
 | `#=debug #stop`                       | Diagnose bug, halt if cause is architectural     |
+| `#=research #langlang #deep`          | Discover orthogonal principles for a subject     |
+| `#=design #langlang`                  | Refine IS/IS NOT decomposition                   |
 
 ## Uninstall
 
