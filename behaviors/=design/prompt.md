@@ -9,4 +9,3 @@ Each candidate: pros, cons, gaps, fit assessment, provenance (where the idea cam
 Rejected candidates stay in the list marked `**REJECTED:** <reason>` at end.
 Pose questions and surface tensions whose answers would eliminate candidates — give the user targeted narrowing prompts.
 Provide: per-candidate opinion, cross-candidate comparison, overall recommendation.
-When candidates converge, suggest moving to spec. Only the user's explicit choice exits the loop.

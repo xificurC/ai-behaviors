@@ -136,27 +136,31 @@ OUT=$(invoke "do stuff #deep" | context_of)
 assert_contains "$OUT" "</behavior-modifiers>" && \
   assert_not_contains "$OUT" "</operating-mode>" && pass
 
-run_test "op_mode_with_modifiers_has_within_preamble"
+run_test "framework_block_present_with_mode_and_modifiers"
 OUT=$(invoke "do stuff #=code #deep" | context_of)
-assert_contains "$OUT" "WITHIN the operating mode" && pass
+assert_contains "$OUT" "<framework>" && \
+  assert_contains "$OUT" "</framework>" && pass
 
-run_test "modifiers_only_omits_within_preamble"
+run_test "framework_block_present_with_modifiers_only"
 OUT=$(invoke "do stuff #deep" | context_of)
-assert_not_contains "$OUT" "WITHIN the operating mode" && pass
+assert_contains "$OUT" "<framework>" && pass
 
-run_test "modifiers_include_marker_instruction"
+run_test "framework_block_present_with_mode_only"
+OUT=$(invoke "do stuff #=code" | context_of)
+assert_contains "$OUT" "<framework>" && pass
+
+run_test "framework_contains_transition_rule"
+OUT=$(invoke "do stuff #=code" | context_of)
+assert_contains "$OUT" "Only the user switches modes" && pass
+
+run_test "framework_contains_marker_instruction"
 OUT=$(invoke "do stuff #deep" | context_of)
-assert_contains "$OUT" "mark it: (#name)" && \
-  assert_not_contains "$OUT" "directly drives" && \
-  assert_not_contains "$OUT" "genuinely additive" && pass
+assert_contains "$OUT" "mark it: (#name)" && pass
 
-run_test "op_mode_only_omits_marker_instruction"
+run_test "framework_contains_compaction_instruction"
 OUT=$(invoke "do stuff #=code" | context_of)
-assert_not_contains "$OUT" "mark it: (#name)" && pass
-
-run_test "output_includes_compaction_instruction"
-OUT=$(invoke "do stuff #=code" | context_of)
-assert_contains "$OUT" "During compaction, preserve" && pass
+assert_contains "$OUT" "During compaction, preserve" && \
+  assert_contains "$OUT" "<framework>" && pass
 
 run_test "no_final_reminder_in_output"
 OUT=$(invoke "do stuff #=code #deep" | context_of)
@@ -243,10 +247,10 @@ invoke "do stuff #=code #deep" >/dev/null
 OUT=$(invoke "next question" | context_of)
 assert_contains "$OUT" "mark it: (#name)" && pass
 
-run_test "continuation_mode_only_omits_marker_instruction"
+run_test "continuation_mode_only_still_has_constraints"
 invoke "do stuff #=code" >/dev/null
 OUT=$(invoke "next question" | context_of)
-assert_not_contains "$OUT" "mark it: (#name)" && pass
+assert_contains "$OUT" "HARD CONSTRAINT" && pass
 
 # === Local behaviors search ===
 

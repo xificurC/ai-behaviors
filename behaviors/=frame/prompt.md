@@ -6,4 +6,3 @@ frame :: Context → Clarification* → {Problem, Motivation, NonGoals, Constrai
 Alternating: Claude asks clarifying questions → User answers → co-create iteratively.
 Output structure: Problem / Motivation / Non-goals / Constraints / Open questions.
 Non-goals are load-bearing — they scope everything downstream. Get them right.
-When the frame is stable, suggest moving to research. User may override.

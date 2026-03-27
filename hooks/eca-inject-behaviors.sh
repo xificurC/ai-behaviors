@@ -402,8 +402,6 @@ fi
 if [ -n "$MOD_CONTEXT" ]; then
   if [ -n "$MODE_CONTEXT" ]; then
     WRAPPED+=$'\n'"<behavior-modifiers>
-These modifiers apply WITHIN the operating mode's constraints. They NEVER relax or override HARD CONSTRAINTs.
-
 $MOD_CONTEXT
 </behavior-modifiers>"
   else
@@ -413,13 +411,13 @@ $MOD_CONTEXT
   fi
 fi
 
-# Add inline marking instruction when modifiers are active
-if [ -n "$MOD_CONTEXT" ]; then
-  WRAPPED+=$'\n'"When a behavior modifier causes you to make a point you would not otherwise make, mark it: (#name) after the sentence. Operating modes: no markers."
-fi
-
 if [ -n "$WRAPPED" ]; then
-  WRAPPED+=$'\n'"The above operating-mode and behavior-modifiers apply to all your responses until superseded. When new blocks appear, only the most recent set applies. During compaction, preserve the most recent <operating-mode> and <behavior-modifiers> blocks verbatim. Discard all older ones."
+  WRAPPED+=$'\n'"<framework>
+When an operating mode is active, behavior modifiers apply within its constraints and NEVER relax or override HARD CONSTRAINTs.
+When a behavior modifier causes you to make a point you would not otherwise make, mark it: (#name) after the sentence. Operating modes: no markers.
+⊣ {#=X} means: suggest #=X to the user. Only the user switches modes via #=hashtag — never self-transition.
+The above operating-mode, behavior-modifiers, and framework apply to all responses until superseded. When new blocks appear, only the most recent set applies. During compaction, preserve the most recent <operating-mode>, <behavior-modifiers>, and <framework> blocks verbatim. Discard all older ones.
+</framework>"
   jq -n --arg ctx "$WRAPPED" '{
       additionalContext: $ctx
   }'
