@@ -105,6 +105,7 @@ Each is orthogonal to qualities and to each other. Some pair naturally with spec
 | `#fractal`          | Scale variation       | Apply at every scale — macro, meso, micro                  |
 | `#tdd`              | Test-driven cycle     | Red → green → refactor, one behavior at a time             |
 | `#io`               | IO boundaries         | Pure core, impure shell — own every side effect            |
+| `#fp`               | Functional style      | Immutable data, pure functions, composition, values over objects |
 | `#contract`         | Correctness criteria  | Pre/post/invariant — who owes what to whom                 |
 | `#backward`         | Reverse reasoning     | Start from end state, derive preconditions                 |
 | `#analogy`          | Structural transfer   | Map structure from solved domains to unsolved ones         |
