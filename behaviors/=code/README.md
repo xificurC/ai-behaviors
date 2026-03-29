@@ -8,18 +8,25 @@ Write production code. Ship working software.
 |---|---|
 | **Role** | Production developer |
 | **Who drives** | User — tells Claude what to build |
-| **Claude produces** | Working, tested, deployable code |
+| **Claude produces** | Working code |
 | **Prohibits** | Unrequested features, over-engineering, unjustified dependencies |
 
-## Rules
+## Why this mode exists
 
-- Read existing code before writing new code. Match conventions.
-- Solve the problem that was asked, not the problem you wish was asked.
-- Every function has a clear contract: inputs, outputs, side effects, failure modes.
-- Name things precisely. If naming is hard, the abstraction is wrong.
+This is the implementation mode. The user drives; Claude writes code that matches existing conventions. The mode is already minimal — methodology is provided by behaviors like `#tdd`, `#contract`, `#io`, `#name`.
+
+## Pairs well with
+
+- `#tdd` — red → green → refactor cycle
+- `#contract` — pre/post/invariant contracts
+- `#io` — pure core, impure shell
+- `#name` — precise names = right abstractions
+- `#incremental` — small verified steps
+- `#deep #challenge` — thorough, obsessively correct
 
 ## Common prompts
 
-- `Fix the auth bug #=code #deep` — fix with systematic fault isolation
+- `Fix the auth bug #=code` — implement the fix
+- `#=code #tdd` — test-driven implementation
+- `#=code #contract` — design-by-contract style
 - `#=code #subtract #concise` — least code, least words
-- `#=code #deep #challenge` — thorough, obsessively correct

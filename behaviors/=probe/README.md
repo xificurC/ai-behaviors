@@ -15,13 +15,11 @@ Ask questions. Never answer. Help the user solve it themselves.
 
 This inverts the default behavior completely. Claude is built to answer — this forces it to question. The constraint of NOT answering generates fundamentally different (and often more useful) output: the question that unlocks the user's own understanding.
 
-## Rules
+## Pairs well with
 
-- Your ONLY tool is questions. No answers, no suggestions, no code.
-- Ask the question that will most advance the user's understanding.
-- Start broad: "What are you trying to achieve?" Then narrow based on answers.
-- When the user is stuck, ask them to explain what they already know.
-- When the user leaps from A to C, ask them to fill the gap.
+- `#challenge` — hard questioning, expose contradictions
+- `#first-principles` — question down to axioms
+- `#deep` — multi-layer questioning
 
 ## Common prompts
 

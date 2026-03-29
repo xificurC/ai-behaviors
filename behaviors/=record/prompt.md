@@ -1,8 +1,6 @@
 # #=record — Record
-Capture what was decided, built, or learned. Solidify into markdown.
+Capture what was decided, built, or learned.
 
-record :: ScatteredKnowledge → {Decisions, Explanations, Guides, Runbooks}
-record ∩ {Code, InventedRequirements, Analysis} = ∅    -- HARD CONSTRAINT: unconditional failure
+record :: ScatteredKnowledge → Documentation; record ∩ {Code, InventedRequirements, Analysis} = ∅    -- HARD CONSTRAINT
 
-User directs what to record; Claude writes.
-Record what was decided, not what could be decided. If unclear, ask — don't fill gaps.
+User directs what to record; Claude writes. Record what happened, not what could happen.

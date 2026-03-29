@@ -31,11 +31,11 @@ Clone, then run `./install` for Claude Code, `./eca-install` for ECA. This symli
 
 ## Catalog
 
-Three dimensions: **modes** define the interaction contract, **qualities** modify how the LLM thinks, **techniques** add specific cognitive methods.
+Two dimensions: **modes** define the interaction loop (who drives, what's exchanged, when the loop re-triggers), **behaviors** prescribe how the LLM works within that loop (methodology, way of thinking, output format, constraints).
 
 ### Operating Modes
 
-Modes define the interaction contract — what the LLM produces and what it will NOT do. Only one operating mode at a time — multiple modes will be rejected.
+Modes define the interaction loop — who drives, what the LLM produces, and what it will NOT do. Modes are pure interaction patterns; they don't prescribe methodology. Only one operating mode at a time — multiple modes will be rejected.
 
 | Mode         | Use when                                   | Boundary                   |
 |--------------|--------------------------------------------|----------------------------|
@@ -61,9 +61,13 @@ Modes define the interaction contract — what the LLM produces and what it will
 
 **Learning.** mentor provides knowledge; probe draws out yours.
 
-### Qualities
+### Behaviors
 
-Qualities modify HOW your LLM thinks. Each controls an independent axis. Stack freely.
+Behaviors prescribe how the LLM works within a mode. Stack freely with any mode.
+
+#### Qualities — thinking axes
+
+Each controls an independent axis. Stack freely.
 
 | Hashtag             | Axis              | Description                                                |
 |---------------------|-------------------|------------------------------------------------------------|
@@ -86,29 +90,40 @@ A: The purpose of the qualities is to steer the LLM towards a new direction. LLM
 
 Q: Why not just pick all qualities every time?
 
-A: Because your needs don't reflect that. For some problem you want to `#=research #wide #creative` to find alternatives, for another you want to `#=research #deep #first-principles` to find the best implementation. For one document you want to `#=record #concise #subtract`, for another `#=record #steel-man #challenge`.
+A: Because your needs don't reflect that. For some problem you want to `#=research #wide #creative` to find alternatives, for another you want to `#=research #deep #first-principles` to find the best implementation.
 
-### Techniques
+#### Methods — cognitive and structural approaches
 
-Techniques add a specific cognitive method. Each is orthogonal to the qualities and to each other.
+Each is orthogonal to qualities and to each other. Some pair naturally with specific modes (noted in mode READMEs).
 
-| Hashtag      | Technique           | Description                                              |
-|--------------|---------------------|----------------------------------------------------------|
-| `#simulate`  | Mental execution    | Trace step by step, maintain exact state, flag anomalies |
-| `#decompose` | Structural division | Break into independent subproblems, find natural seams   |
-| `#factor`    | Dimensional analysis| Find independent dimensions, state value of each         |
-| `#recursive` | Self-application    | Apply process to its own output, iterate until fixpoint  |
-| `#fractal`   | Scale variation     | Apply at every scale — macro, meso, micro                |
-| `#tdd`       | Test-driven cycle   | Red → green → refactor, one behavior at a time           |
-| `#io`        | IO boundaries       | Pure core, impure shell — own every side effect          |
-| `#contract`  | Correctness criteria| Pre/post/invariant — who owes what to whom               |
-| `#backward`  | Reverse reasoning   | Start from end state, derive preconditions               |
-| `#analogy`   | Structural transfer | Map structure from solved domains to unsolved ones       |
-| `#temporal`  | Ordering analysis   | Consider all orderings, find the ones that break         |
-| `#name`      | Naming precision    | If you can't name it precisely, the abstraction is wrong |
-| `#checklist` | Scope tracking      | Track every spec item, force disposition, skip nothing   |
-| `#stop`      | Boundary discipline | Stop at gaps, report provenance, don't cross phases      |
-| `#langlang`  | Knowledge compilation | Compile knowledge into orthogonal artifact (IS/IS NOT)  |
+| Hashtag             | Method                | Description                                                |
+|---------------------|-----------------------|------------------------------------------------------------|
+| `#simulate`         | Mental execution      | Trace step by step, maintain exact state, flag anomalies   |
+| `#decompose`        | Structural division   | Break into independent subproblems, find natural seams     |
+| `#factor`           | Dimensional analysis  | Find independent dimensions, state value of each           |
+| `#recursive`        | Self-application      | Apply process to its own output, iterate until fixpoint    |
+| `#fractal`          | Scale variation       | Apply at every scale — macro, meso, micro                  |
+| `#tdd`              | Test-driven cycle     | Red → green → refactor, one behavior at a time             |
+| `#io`               | IO boundaries         | Pure core, impure shell — own every side effect            |
+| `#contract`         | Correctness criteria  | Pre/post/invariant — who owes what to whom                 |
+| `#backward`         | Reverse reasoning     | Start from end state, derive preconditions                 |
+| `#analogy`          | Structural transfer   | Map structure from solved domains to unsolved ones         |
+| `#temporal`         | Ordering analysis     | Consider all orderings, find the ones that break           |
+| `#name`             | Naming precision      | If you can't name it precisely, the abstraction is wrong   |
+| `#checklist`        | Scope tracking        | Track every spec item, force disposition, skip nothing     |
+| `#stop`             | Boundary discipline   | Stop at gaps, report provenance, don't cross phases        |
+| `#langlang`         | Knowledge compilation | Compile knowledge into orthogonal artifact (IS/IS NOT)     |
+| `#bisect`           | Fault isolation       | Cut problem space in half by executing, observe, repeat    |
+| `#epistemic`        | Epistemic rigor       | Label claims with source and confidence, distinguish fact/inference/gap |
+| `#scq`              | Problem framing       | Situation / Complication / Question / Constraints / Non-goals |
+| `#evaluate`         | Uniform evaluation    | Every item × every dimension, no cell skipped              |
+| `#obligations`      | Priority levels       | MUST / SHOULD / MAY / WONT per item                        |
+| `#triage`           | Finding triage        | Label (issue/suggestion/question/nitpick) + blocking + location |
+| `#provenance`       | Origin tracking       | Track where every idea/claim/candidate came from           |
+| `#wbs`              | Work breakdown        | Hierarchical decomposition, numbered, addressable          |
+| `#falsifiable`      | Verification          | Every item has a done-condition or falsification-condition |
+| `#boundary`         | Edge case testing     | Boundaries, sequences, environment, concurrency            |
+| `#explain-first`    | Teach by explaining   | Explanation → code → comprehension check cycle             |
 
 ### Output-Channel Modifiers
 
@@ -131,56 +146,75 @@ Meta-keywords are not behaviors — they control the hook itself.
 
 ## Composition
 
-One mode + any qualities/techniques/modifiers: `#=code #deep #subtract`, `#=design #file #challenge`
+One mode + any behaviors: `#=code #deep #subtract`, `#=debug #bisect #deep`
 
-### Examples
+### Shipped composites
 
-| Combo                                 | Effect                                           |
+Each mode has a capitalized composite that bundles a curated default methodology. Three tiers of usage:
+
+1. `#Debug` — curated default (composite, expands to `#=debug #bisect`)
+2. `#=debug #backward` — explicit methodology choice (override the default)
+3. `#=debug` — bare mode, LLM picks approach
+
+| Composite   | Expands to                                         |
+|-------------|----------------------------------------------------|
+| `#Frame`    | `#=frame #scq`                                     |
+| `#Research` | `#=research #epistemic`                            |
+| `#Design`   | `#=design #evaluate #provenance`                   |
+| `#Spec`     | `#=spec #wbs #obligations #epistemic #falsifiable` |
+| `#Code`     | `#=code #contract #name #checklist`                |
+| `#Debug`    | `#=debug #bisect`                                  |
+| `#Review`   | `#=review #triage`                                 |
+| `#Test`     | `#=test #boundary`                                 |
+| `#Mentor`   | `#=mentor #explain-first`                          |
+| `#Probe`    | `#=probe`                                          |
+| `#Drive`    | `#=drive`                                          |
+| `#Navigate` | `#=navigate`                                       |
+| `#Record`   | `#=record`                                         |
+
+Stack behaviors on top: `#Debug #deep`, `#Code #subtract`, `#Frame #factor`.
+
+### Methodology composition
+
+Modes define the interaction loop. Behaviors fill in the methodology. The same mode with different behaviors produces different approaches:
+
+| Combo                                 | What happens                                     |
 |---------------------------------------|--------------------------------------------------|
+| `#=debug #bisect`                     | Debug by bisecting through execution             |
+| `#=debug #simulate`                   | Debug by tracing execution mentally              |
+| `#=debug #backward`                   | Debug by reasoning backward from the error       |
+| `#=debug`                             | Debug loop, LLM picks approach                   |
+| `#=frame #scq`                        | Frame with SCQ structure                         |
+| `#=frame #scq #factor`                | Frame with SCQ and dimensional analysis          |
+| `#=research #epistemic`               | Research with confidence-tagged findings         |
+| `#=design #evaluate #provenance`      | Design with uniform evaluation + origin tracking |
+| `#=spec #wbs #obligations`            | Spec with addressable, prioritized items         |
+| `#=review #triage`                    | Review with labeled, located findings            |
+| `#=test #boundary`                    | Test with systematic edge case categories        |
+| `#=mentor #explain-first`             | Teach: explain → demonstrate → check             |
 | `#=code #tdd`                         | Test-driven implementation                       |
 | `#=code #deep #challenge`             | Thorough, critically verified code               |
 | `#=code #subtract #concise`           | Least code, least words                          |
-| `#=review #challenge #deep`           | Deep code review, find real flaws                |
+| `#=review #triage #deep`              | Deep review with triaged findings                |
 | `#=review #steel-man`                 | Appreciate what works, then find the flaws       |
-| `#=review #fractal`                   | Review at system, module, function, line level   |
-| `#=spec #deep #wide`                  | Spec-building that goes deep and surveys broadly |
-| `#=spec #decompose #first-principles` | Break the spec into derived subproblems          |
-| `#=frame #factor`                     | Scope the problem by identifying its independent dimensions |
-| `#=design #factor`                    | Evaluate candidates along independent axes                  |
-| `#=research #factor #deep`            | Investigate each dimension of the problem space in depth    |
-| `#=frame #challenge`                  | Stress-test the problem framing                  |
-| `#=design #deep #challenge`           | Deep candidate analysis, attack each option      |
+| `#=spec #wbs #obligations #decompose` | Prioritized spec, broken into subproblems        |
+| `#=frame #factor`                     | Scope the problem by identifying its dimensions  |
+| `#=design #evaluate #challenge`       | Uniform evaluation, stress-tested                |
 | `#=design #first-principles`          | Derive candidates from constraints, not patterns |
-| `#=design #file`                      | Persist candidate exploration to a file          |
-| `#=test #challenge #simulate`         | Adversarial testing with mental execution traces |
-| `#=debug #deep #simulate`             | Deep debugging, trace exact execution state      |
-| `#=debug #backward`                   | Start from error, reason backward to cause       |
+| `#=test #boundary #deep`              | Exhaustive boundary testing                      |
+| `#=debug #bisect #deep`               | Systematic bisection with deep investigation     |
+| `#=debug #simulate`                   | Trace exact execution state to find fault        |
 | `#=code #contract`                    | Pre/post/invariant on every function boundary    |
-| `#=code #name`                        | Precise naming, challenge every vague label      |
-| `#=spec #analogy`                     | Find structural analogs before designing         |
-| `#=review #temporal`                  | Review for race conditions and ordering bugs     |
-| `#=mentor #deep #first-principles`    | Teach from fundamentals, trace to axioms         |
+| `#=research #epistemic #deep #wide`   | Deep, broad investigation with epistemic rigor   |
+| `#=mentor #explain-first #deep`       | Deep teaching, explain → demonstrate → check     |
 | `#=probe #challenge`                  | Hard questioning, expose contradictions          |
 | `#=spec #ground`                      | Verify spec terms are concrete before building   |
-| `#=review #ground #challenge`         | Ground terms, then attack the logic              |
-| `#=research #deep #wide`              | Investigate deeply and broadly                   |
 | `#=record #concise`                   | Terse documentation, minimum words               |
 | `#=navigate #wide #challenge`         | Direct strategy while surfacing risks            |
 | `#deep #challenge #steel-man`         | Dialectic: strengthen then attack, in depth      |
-| `#decompose #fractal`                 | Break apart at every scale                       |
-| `#recursive #challenge`               | Multi-pass self-critique until stable            |
-| `#=review #negative-space #deep`      | Find what's absent, then dig into why            |
-| `#=spec #negative-space #wide`        | Surface missing requirements and adjacent gaps   |
-| `#=code #user-lens #name`             | Build from user's perspective, name in their language |
-| `#=review #deep #challenge #meta`     | Deep critical review that also audits its own framing |
-| `#=code #contract #tdd`               | Test-driven with explicit contracts per function |
-| `#=code #checklist`                   | Implement against a spec, track every item       |
-| `#=code #checklist #decompose`        | Break spec into parts, track each independently  |
-| `#=code #stop`                        | Implement, halt on any gap or surprise           |
-| `#=code #stop #checklist`             | Implement spec items, halt on gaps, track all    |
+| `#=code #checklist #stop`             | Implement spec items, halt on gaps, track all    |
 | `#=debug #stop`                       | Diagnose bug, halt if cause is architectural     |
 | `#=research #langlang #deep`          | Discover orthogonal principles for a subject     |
-| `#=design #langlang`                  | Refine IS/IS NOT decomposition                   |
 
 ## Uninstall
 
@@ -309,13 +343,17 @@ You'd write "When doing X follow these rules: ...". You are a) implicitly and b)
 
 ## Design
 
+**Modes = interaction loops.** Operating modes define ONLY the interaction pattern: who drives, what's exchanged, when the loop re-triggers. They don't prescribe methodology.
+
+**Behaviors = everything else.** Behaviors prescribe how the LLM works within the loop: methodology, way of thinking, output format, constraints. They stack additively with any mode.
+
 Two audiences, two files:
 - `README.md` — for humans: full explanations, rationale, examples
 - `prompt.md` — for the LLM: terse imperatives, compressed rules (5-10 lines)
 
 No configuration step. Behaviors are static. Tuning happens through combinations and prompt context.
 
-The modifier hashtags (qualities + techniques) are designed to be **orthogonal** — each controls an independent axis of variation. Any combination produces a coherent, non-contradictory result. No two hashtags do the same thing.
+Behaviors are designed to be **orthogonal** — each controls an independent axis of variation. Any combination produces a coherent, non-contradictory result. No two behaviors do the same thing.
 
 ## FAQ
 

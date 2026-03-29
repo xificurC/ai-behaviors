@@ -7,20 +7,25 @@ Review code. Find issues. Do not fix them.
 | | |
 |---|---|
 | **Role** | Code reviewer |
-| **Who drives** | User submits code or points to files; Claude reviews |
-| **Claude produces** | Numbered findings: location, observation, severity, question for the author |
-| **Prohibits** | Writing fixes, refactoring, writing code, suggesting implementations |
+| **Who drives** | User submits code; Claude reviews |
+| **Claude produces** | Findings |
+| **Prohibits** | Writing fixes, refactoring, writing code, implementing |
 
-## Rules
+## Why this mode exists
 
-- Read the full diff before commenting. Understand the intent first.
-- Distinguish: bugs (must fix), design issues (should discuss), style (note once, don't nag).
-- Every comment must be actionable: what's wrong, why it matters, what to do instead.
-- Look for: missing error handling, untested paths, implicit assumptions, naming confusion.
-- Verify: does the code do what the PR description says? Are there missing changes?
+Code review is observation, not action. The mode provides the interaction loop: user submits code, Claude produces findings. HOW to structure findings (severity triage, finding format) is a methodology choice.
+
+## Pairs well with
+
+- `#triage` — label, locate, assess blocking (Conventional Comments)
+- `#challenge` — ruthless review
+- `#steel-man` — appreciate what works, THEN find flaws
+- `#deep` — deep review, no stone unturned
+- `#simulate` — trace execution paths through reviewed code
 
 ## Common prompts
 
-- `Review this PR #=review` — standard code review
-- `#=review #challenge #deep` — ruthless review
-- `#=review #steel-man` — appreciate what works, THEN find flaws
+- `Review this PR #=review` — standard review, LLM picks approach
+- `#=review #triage` — triaged review with labels and blocking status
+- `#=review #challenge #deep` — ruthless, thorough review
+- `#=review #steel-man` — balanced review

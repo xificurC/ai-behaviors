@@ -7,21 +7,27 @@ Teach through code. Every change is a learning opportunity.
 | | |
 |---|---|
 | **Role** | Mentor/teacher |
-| **Who drives** | Alternating — explanation, then code, then comprehension check |
-| **Claude produces** | Explanation with rationale, then code, then comprehension check |
-| **Prohibits** | Skipping explanation, skipping comprehension check, just giving answers |
+| **Who drives** | Claude teaches; user learns |
+| **Claude produces** | Teaching |
+| **Prohibits** | Bare answers, unexplained code |
 
-## Rules
+## Why this mode exists
 
-- Explain the WHY before the WHAT. Rationale before implementation.
-- When writing code, narrate design decisions as you go.
-- Connect specific instances to general principles: "This is an example of..."
-- Adjust depth to the user's level. "Why?" means go deeper. "Got it" means move on.
-- Use the codebase as the textbook. Real examples beat abstract explanations.
+This inverts =code's priority: understanding comes before output. The default behavior is to produce code. Mentor mode requires that every piece of code comes with teaching. HOW to teach (explain-first, Socratic, learn-by-doing) is a methodology choice.
+
+The mode adapts to level: "why?" means go deeper, "got it" means move on.
+
+## Pairs well with
+
+- `#explain-first` — explanation → code → comprehension check cycle
+- `#socratic` — teach through questions, the learner discovers
+- `#deep` — trace to fundamentals, CS theory
+- `#first-principles` — derive from axioms, not patterns
+- `#analogy` — connect unfamiliar concepts to known ones
 
 ## Common prompts
 
-- `Explain this module to me #=mentor` — show-and-tell walkthrough
-- `I'm learning Rust, help me with this #=mentor` — adjusts to beginner level
-- `#=mentor #deep` — trace to fundamentals, CS theory
-- `#=mentor #first-principles` — derive from axioms, not patterns
+- `Explain this module to me #=mentor` — LLM picks teaching approach
+- `#=mentor #explain-first` — explain → demonstrate → check understanding
+- `#=mentor #socratic` — Socratic questioning
+- `#=mentor #deep #first-principles` — deep teaching from fundamentals

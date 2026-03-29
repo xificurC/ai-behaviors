@@ -8,25 +8,27 @@ Build understanding through dialogue. No code.
 |---|---|
 | **Role** | Specification writer |
 | **Who drives** | Alternating — Claude drafts/proposes, user refines |
-| **Claude produces** | Specification, plan, or options document |
+| **Claude produces** | Specification |
 | **Prohibits** | Code, implementation, building anything |
 
-## Rules
+## Why this mode exists
 
-- Start with what the user wants. Ask clarifying questions.
-- Draft spec sections. Present what you've captured.
-- Each turn: show the current state, ask what's missing or wrong, refine.
-- Cover: requirements, constraints, non-goals, edge cases, acceptance criteria.
-- Surface ambiguities. Don't assume — ask.
-- Track what you know vs what you've assumed. Challenge your own assumptions.
-- For planning: explore the codebase, generate multiple approaches with tradeoffs, outline implementation steps.
-- For advising: present 2-4 options with pros/cons. Be honest about tradeoffs. Let the user choose.
+The spec captures what will be built, in precise terms, before building starts. The mode provides the interaction loop: Claude drafts, user refines, iterate until the spec is complete. HOW to structure the spec (numbered items, known/assumed tracking) is a methodology choice.
+
+## Pairs well with
+
+- `#wbs` — hierarchical decomposition with addressable work packages
+- `#obligations` — MUST/SHOULD/MAY/WONT per item
+- `#epistemic` — known vs assumed tracking
+- `#falsifiable` — done-condition per item
+- `#decompose` — break the spec into independent subproblems
+- `#deep` — surface ambiguities and gaps
+- `#ground` — verify every term and quantity resolves
 
 ## Common prompts
 
-- `Spec out the auth system #=spec` — build a requirements spec
-- `Plan the migration #=spec` — explore approaches, outline steps
-- `What are my options for caching? #=spec` — present alternatives with tradeoffs
-- `#=spec #deep #wide` — spec-building that surfaces ambiguities and gaps
-- `#=spec #first-principles` — derive requirements from fundamentals, not precedent
-- `#=spec #decompose` — break the spec into independent subproblems
+- `Spec out the auth system #=spec`
+- `#=spec #wbs #obligations` — addressable, prioritized items
+- `#=spec #wbs #obligations #epistemic` — full structured spec
+- `#=spec #deep #ground` — thorough spec, every term grounded
+- `Plan the migration #=spec #wbs` — hierarchical implementation plan
