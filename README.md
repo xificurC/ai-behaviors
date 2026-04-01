@@ -29,6 +29,14 @@ Behaviors stick until replaced — a `#=code #decompose #first-principles` promp
 
 Clone, then run `./install` for Claude Code, `./eca-install` for ECA. This symlinks a hook into your configuration. The hook reads behaviors directly from the repo — `git pull` updates everything.
 
+## Easy Start
+
+If you want to get a quick feel of how this works, then:
+
+- in your first prompt, state your problem/task. Add `#=frame` at the end of your prompt and instruct the LLM to not enter plan mode. "I want to add feature X. DON'T enter plan mode in this session, ever. #=frame"
+- after a few iterations the LLM will suggest moving to `#=research`. Type it.
+- follow the suggestions
+
 ## Catalog
 
 Two dimensions: **modes** define the interaction loop (who drives, what's exchanged, when the loop re-triggers), **behaviors** prescribe how the LLM works within that loop (methodology, way of thinking, output format, constraints).
