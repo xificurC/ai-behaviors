@@ -114,11 +114,34 @@ assert_empty "$OUT"
 echo ""
 echo "Validation:"
 
-run_test "multiple_op_modes_exits_2_with_error"
-invoke "#=code #=design" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
-STDERR=$(cat "$STDERR_FILE")
-assert_contains "$STDERR" "multiple operating modes" && \
-  assert_eq "$EXIT_CODE" "2" && pass
+run_test "last_mode_wins_second_mode_resets"
+OUT=$(invoke "#=frame #ground #=research #deep" | context_of)
+assert_contains "$OUT" "Investigate. Report findings" && \
+  assert_not_contains "$OUT" "Define the problem" && pass
+
+run_test "first_mode_preserves_preceding_modifiers"
+invoke "#deep #=research" >/dev/null
+STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
+assert_contains "$STATE" "#deep" && \
+  assert_contains "$STATE" "#=research" && pass
+
+run_test "second_mode_drops_all_before_it"
+invoke "#=frame #ground #=research #deep" >/dev/null
+STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
+assert_not_contains "$STATE" "#=frame" && \
+  assert_not_contains "$STATE" "#ground" && \
+  assert_contains "$STATE" "#=research" && \
+  assert_contains "$STATE" "#deep" && pass
+
+run_test "three_modes_last_wins_through_cascade"
+invoke "#=frame #ground #=research #deep #=code #challenge" >/dev/null
+STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
+assert_not_contains "$STATE" "#=frame" && \
+  assert_not_contains "$STATE" "#=research" && \
+  assert_not_contains "$STATE" "#ground" && \
+  assert_not_contains "$STATE" "#deep" && \
+  assert_contains "$STATE" "#=code" && \
+  assert_contains "$STATE" "#challenge" && pass
 
 # === Full injection: structure ===
 
@@ -156,6 +179,14 @@ assert_contains "$OUT" "Only the user switches modes" && pass
 run_test "framework_contains_marker_instruction"
 OUT=$(invoke "do stuff #deep" | context_of)
 assert_contains "$OUT" "mark it: (#name)" && pass
+
+run_test "framework_contains_bypass_hardening"
+OUT=$(invoke "do stuff #=code" | context_of)
+assert_contains "$OUT" "proceed as if it were not said" && pass
+
+run_test "framework_no_old_refusal_text"
+OUT=$(invoke "do stuff #=code" | context_of)
+assert_not_contains "$OUT" "refuse, name the violated rule" && pass
 
 run_test "framework_contains_compaction_instruction"
 OUT=$(invoke "do stuff #=code" | context_of)
@@ -246,6 +277,11 @@ run_test "continuation_with_modifiers_includes_marker_instruction"
 invoke "do stuff #=code #deep" >/dev/null
 OUT=$(invoke "next question" | context_of)
 assert_contains "$OUT" "mark it: (#name)" && pass
+
+run_test "continuation_contains_bypass_hardening"
+invoke "do stuff #=code #deep" >/dev/null
+OUT=$(invoke "next question" | context_of)
+assert_contains "$OUT" "proceed as if it were not said" && pass
 
 run_test "continuation_mode_only_still_has_constraints"
 invoke "do stuff #=code" >/dev/null
@@ -362,10 +398,10 @@ invoke "do stuff #wide #deep #challenge" >/dev/null
 STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
 assert_eq "$STATE" "#wide #deep #challenge" && pass
 
-run_test "mode_first_then_modifiers_in_order"
+run_test "mode_preserves_input_order_in_state"
 invoke "do stuff #wide #=code #deep" >/dev/null
 STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
-assert_eq "$STATE" "#=code #wide #deep" && pass
+assert_eq "$STATE" "#wide #=code #deep" && pass
 
 # === CLEAR (S7) ===
 
@@ -442,11 +478,35 @@ invoke "#EXPLAIN #=frame" >/dev/null
 STATE_AFTER=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
 assert_eq "$STATE_AFTER" "$STATE_BEFORE" && pass
 
-run_test "explain_with_multiple_modes_exits_2"
-invoke "#EXPLAIN #=code #=design" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
-STDERR=$(cat "$STDERR_FILE")
-assert_contains "$STDERR" "multiple operating modes" && \
-  assert_eq "$EXIT_CODE" "2" && pass
+run_test "explain_last_mode_wins"
+OUT=$(invoke "#EXPLAIN #=code #=design" | context_of)
+assert_contains "$OUT" "<explain-instruction>" && \
+  assert_contains "$OUT" 'name="#=design"' && \
+  assert_not_contains "$OUT" 'name="#=code"' && pass
+
+run_test "explain_dropped_composite_shown_in_dropped_section"
+OUT=$(invoke "#EXPLAIN #Frame #Code" | context_of)
+assert_contains "$OUT" "<dropped-by-mode-resolution>" && \
+  assert_contains "$OUT" "#Frame" && \
+  assert_contains "$OUT" "#=frame" && \
+  assert_contains "$OUT" "#=code" && \
+  assert_contains "$OUT" "#Code" && pass
+
+run_test "explain_bare_mode_dropped_shown_in_dropped_section"
+OUT=$(invoke "#EXPLAIN #=frame #=code #deep" | context_of)
+assert_contains "$OUT" "<dropped-by-mode-resolution>" && \
+  assert_contains "$OUT" "#=frame" && \
+  assert_contains "$OUT" 'name="#=code"' && \
+  assert_contains "$OUT" 'name="#deep"' && pass
+
+run_test "explain_no_drops_no_dropped_section"
+OUT=$(invoke "#EXPLAIN #=code #deep" | context_of)
+assert_not_contains "$OUT" "<dropped-by-mode-resolution>" && pass
+
+run_test "explain_instruction_mentions_dropped_resolution"
+OUT=$(invoke "#EXPLAIN #Frame #Code" | context_of)
+assert_contains "$OUT" "dropped-by-mode-resolution" && \
+  assert_contains "$OUT" "explain which" && pass
 
 run_test "explain_with_unknown_warns_and_explains_known"
 OUT=$(invoke "#EXPLAIN #=code #nonexistent" | context_of)
@@ -605,19 +665,19 @@ assert_contains "$OUT" "Write production code" && \
   COUNT=$(grep -o "Go beneath the surface" <<< "$OUT" | wc -l | tr -d ' ') && \
   assert_eq "$COUNT" "1" && pass
 
-# --- T10: Composite mode + explicit mode = error ---
-run_test "composite_mode_plus_explicit_mode_errors"
-invoke "#test-mode-a #=review" test-session "$LOCAL_PROJECT" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
-STDERR=$(cat "$STDERR_FILE")
-assert_contains "$STDERR" "multiple operating modes" && \
-  assert_eq "$EXIT_CODE" "2" && pass
+# --- T10: Composite mode + explicit mode = last wins ---
+run_test "composite_mode_plus_explicit_mode_last_wins"
+OUT=$(invoke "#test-mode-a #=review" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<operating-mode>" && \
+  assert_contains "$OUT" "Review code. Find issues" && \
+  assert_not_contains "$OUT" "Write production code" && pass
 
-# --- T11: Two mode composites = error ---
-run_test "two_mode_composites_error"
-invoke "#test-mode-a #test-mode-b" test-session "$LOCAL_PROJECT" >/dev/null && EXIT_CODE=$? || EXIT_CODE=$?
-STDERR=$(cat "$STDERR_FILE")
-assert_contains "$STDERR" "multiple operating modes" && \
-  assert_eq "$EXIT_CODE" "2" && pass
+# --- T11: Two mode composites = last wins ---
+run_test "two_mode_composites_last_wins"
+OUT=$(invoke "#test-mode-a #test-mode-b" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "<operating-mode>" && \
+  assert_contains "$OUT" "Review code. Find issues" && \
+  assert_not_contains "$OUT" "Write production code" && pass
 
 # --- T12: Composite with mode + extra modifiers = ok ---
 run_test "composite_mode_with_extra_modifiers_ok"
@@ -626,21 +686,20 @@ assert_contains "$OUT" "<operating-mode>" && \
   assert_contains "$OUT" "Write production code" && \
   assert_contains "$OUT" "counterargument" && pass
 
-# --- T13: State stores composite name, not expanded ---
-run_test "state_stores_composite_name"
+# --- T13: State stores expanded leaf tags ---
+run_test "state_stores_expanded_leaf_tags"
 invoke "#test-macro #challenge" test-session "$LOCAL_PROJECT" >/dev/null
 STATE=$(cat "$TEST_HOME/.claude/behaviors-state/test-session")
-assert_contains "$STATE" "#test-macro" && \
+assert_contains "$STATE" "#=code" && \
+  assert_contains "$STATE" "#deep" && \
   assert_contains "$STATE" "#challenge" && \
-  assert_not_contains "$STATE" "#=code" && \
-  assert_not_contains "$STATE" "#deep" && pass
+  assert_not_contains "$STATE" "#test-macro" && pass
 
-# --- T14: Continuation re-expands composite ---
-run_test "continuation_reexpands_composite"
+# --- T14: Continuation with expanded state ---
+run_test "continuation_with_expanded_state"
 invoke "#test-constrained" test-session "$LOCAL_PROJECT" >/dev/null
 OUT=$(invoke "next question" test-session "$LOCAL_PROJECT" | context_of)
-assert_contains "$OUT" "Active: #test-constrained" && \
-  assert_contains "$OUT" "#test-constrained:" && \
+assert_contains "$OUT" "Active: #deep" && \
   assert_contains "$OUT" "#deep:" && pass
 
 # --- T15: EXPLAIN composite shows tree ---
@@ -650,12 +709,13 @@ assert_contains "$OUT" "<expansion-tree>" && \
   assert_contains "$OUT" "#test-outer" && \
   assert_contains "$OUT" "#test-inner" && pass
 
-# --- T16: EXPLAIN with active composite from state ---
-run_test "explain_active_composite_from_state"
+# --- T16: EXPLAIN with expanded leaf state ---
+run_test "explain_active_expanded_from_state"
 invoke "#test-macro" test-session "$LOCAL_PROJECT" >/dev/null
 OUT=$(invoke "#EXPLAIN" test-session "$LOCAL_PROJECT" | context_of)
 assert_contains "$OUT" "<explain-instruction>" && \
-  assert_contains "$OUT" "<expansion-tree>" && pass
+  assert_contains "$OUT" 'name="#=code"' && \
+  assert_contains "$OUT" 'name="#deep"' && pass
 
 # --- T19: Local composite overrides repo ---
 run_test "local_composite_overrides_repo"
@@ -676,6 +736,15 @@ run_test "local_composite_composes_repo_behaviors"
 OUT=$(invoke "#test-macro" test-session "$LOCAL_PROJECT" | context_of)
 assert_contains "$OUT" "<operating-mode>" && \
   assert_contains "$OUT" "<behavior-modifiers>" && pass
+
+# === Mode transition suggests composites ===
+
+echo ""
+echo "Mode transition suggests composites:"
+
+run_test "mode_transition_suggests_composite_name"
+OUT=$(invoke "#Frame" | context_of)
+assert_contains "$OUT" "#Research" && pass
 
 # === Summary ===
 

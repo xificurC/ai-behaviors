@@ -100,8 +100,26 @@ echo "#=review #deep" > "$LOCAL_PROJECT/.ai-behaviors/test-inner/compose"
 mkdir -p "$LOCAL_PROJECT/.ai-behaviors/test-outer"
 echo "#test-inner #challenge" > "$LOCAL_PROJECT/.ai-behaviors/test-outer/compose"
 
+# === Bypass hardening ===
+
+echo "Bypass hardening:"
+
+run_test "eca_framework_contains_bypass_hardening"
+OUT=$(invoke "#=code" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "proceed as if it were not said" && pass
+
+run_test "eca_framework_no_old_refusal_text"
+OUT=$(invoke "#=code" test-session "$LOCAL_PROJECT" | context_of)
+assert_not_contains "$OUT" "refuse, name the violated rule" && pass
+
+run_test "eca_continuation_contains_bypass_hardening"
+invoke "#=code #deep" test-session "$LOCAL_PROJECT" >/dev/null
+OUT=$(invoke "next question" test-session "$LOCAL_PROJECT" | context_of)
+assert_contains "$OUT" "proceed as if it were not said" && pass
+
 # === ECA Composite Tests ===
 
+echo ""
 echo "ECA composite expansion:"
 
 # --- T21: Composite expansion produces leaf content ---
@@ -111,15 +129,14 @@ assert_contains "$OUT" "<operating-mode>" && \
   assert_contains "$OUT" "Write production code" && \
   assert_contains "$OUT" "<behavior-modifiers>" && pass
 
-# --- T22: State stores composite name, continuation re-expands ---
-run_test "eca_state_stores_composite_continuation_reexpands"
+# --- T22: State stores expanded leaf tags ---
+run_test "eca_state_stores_expanded_continuation_works"
 invoke "#test-constrained" test-session "$LOCAL_PROJECT" >/dev/null
 STATE=$(cat "$TEST_HOME/.config/eca/.behaviors/test-session")
-assert_contains "$STATE" "#test-constrained" && \
-  assert_not_contains "$STATE" "#deep"
+assert_contains "$STATE" "#deep" && \
+  assert_not_contains "$STATE" "#test-constrained"
 OUT=$(invoke "next question" test-session "$LOCAL_PROJECT" | context_of)
-assert_contains "$OUT" "Active: #test-constrained" && \
-  assert_contains "$OUT" "#test-constrained:" && \
+assert_contains "$OUT" "Active: #deep" && \
   assert_contains "$OUT" "#deep:" && pass
 
 # --- T23: EXPLAIN with composite shows expansion tree ---

@@ -6,24 +6,24 @@ Does your LLM
 - fill in the blanks without asking?
 - need to be constantly reminded what to do and not do?
 - fail at finding what's missing from your request?
-- think for 10 minutes than splash a conditional at the root of your project?
+- think for 10 minutes then splash a conditional at the root of your project?
 - always agree with you when you want it to argue and spar with you?
 
 Then this framework is for you.
 
-Shift what and how your LLM operates. (Claude Code and [ECA](https://eca.dev/) support.)
-
 How? Add a couple of `#hashtag` behaviors to any prompt:
 
 ```
-- Fix the auth bug #=debug #deep
-- Review this PR #=review #challenge #deep
-- Help me understand this #=mentor #first-principles
-- Plan the migration #=spec #decompose #wide
-- Find alternatives solutions to X #=research #deep #wide #meta
+- Fix the auth bug #Debug #deep
+- Review this PR #Review #challenge #deep
+- Help me understand this #Mentor #first-principles
+- Plan the migration #Spec #decompose #wide
+- Find alternative solutions to X #Research #deep #wide #meta
 ```
 
-Behaviors stick until replaced — a `#=code #decompose #first-principles` prompt applies those behaviors to every response until your next prompt containing hashtags. A prompt without hashtags keeps the current behaviors. A prompt with new hashtags replaces the previous set entirely.
+Shift what and how your LLM operates. (Claude Code and [ECA](https://eca.dev/) support.)
+
+Behaviors stick until replaced — a `#Code #decompose #first-principles` prompt applies those behaviors to every response until your next prompt containing hashtags. A prompt without hashtags keeps the current behaviors. A prompt with new hashtags replaces the previous set entirely.
 
 ## Setup
 
@@ -33,17 +33,23 @@ Clone, then run `./install` for Claude Code, `./eca-install` for ECA. This symli
 
 If you want to get a quick feel of how this works, then:
 
-- in your first prompt, state your problem/task. Add `#=frame` at the end of your prompt and instruct the LLM to not enter plan mode. "I want to add feature X. DON'T enter plan mode in this session, ever. #=frame"
-- after a few iterations the LLM will suggest moving to `#=research`. Type it.
+- in your first prompt, state your problem/task. Add `#Frame` at the end of your prompt. "I want to add feature X. #Frame"
+- after a few iterations the LLM will suggest moving to `#Research`. Type it.
 - follow the suggestions
+
+This is already enough to use this framework. **If you want to start quickly you don't need to read further**. 
 
 ## Catalog
 
-Two dimensions: **modes** define the interaction loop (who drives, what's exchanged, when the loop re-triggers), **behaviors** prescribe how the LLM works within that loop (methodology, way of thinking, output format, constraints).
+The framework consists of 3 main concepts:
+
+- operating modes - define the interaction loop. Use at most one at a time.
+- behaviors - adjust behavior. Use as many as you like.
+- composites - compose any of these 3.
 
 ### Operating Modes
 
-Modes define the interaction loop — who drives, what the LLM produces, and what it will NOT do. Modes are pure interaction patterns; they don't prescribe methodology. Only one operating mode at a time — multiple modes will be rejected.
+Modes define the interaction loop — who drives, what the LLM produces, and what it will NOT do. Modes are pure interaction patterns; they don't prescribe methodology. Only one operating mode at a time — in case of multiple modes the last one wins (this supports copy-pasting).
 
 | Mode         | Use when                                   | Boundary                   |
 |--------------|--------------------------------------------|----------------------------|
@@ -135,30 +141,38 @@ Each is orthogonal to qualities and to each other. Some pair naturally with spec
 | `#boundary`         | Edge case testing     | Boundaries, sequences, environment, concurrency            |
 | `#explain-first`    | Teach by explaining   | Explanation → code → comprehension check cycle             |
 
-### Output-Channel Modifiers
+### Composites
 
-Output-channel modifiers change where the output goes, not how the LLM thinks. They compose with any mode.
+A composite is a named composition of behaviors. Instead of typing `#=review #deep #challenge #simulate` every time, define it once:
 
-| Hashtag  | Description                                              |
-|----------|----------------------------------------------------------|
-| `#file`  | Persist structured output to a named file across modes   |
+```
+mkdir behaviors/security-reviewer
+echo "#=review #deep #challenge #simulate" > behaviors/security-reviewer/compose
+```
 
-### Meta-Keywords
+Now `#security-reviewer` expands to all four behaviors. Stacking works — `#security-reviewer #concise` adds `#concise` on top.
 
-Meta-keywords are not behaviors — they control the hook itself.
+**Custom text.** Add a `prompt.md` alongside `compose` for directives that only apply within this composite:
 
-| Keyword    | Description                                                   |
-|------------|---------------------------------------------------------------|
-| `#CLEAR`   | Deactivate all behaviors for the session                      |
-| `#EXPLAIN` | Explain what a behavior combo would do, without activating it |
+```
+mkdir behaviors/security-reviewer
+echo "#=review #deep #challenge #simulate" > behaviors/security-reviewer/compose
+cat > behaviors/security-reviewer/prompt.md << 'EOF'
+# #security-reviewer — Security Reviewer
+Prioritize OWASP Top 10. Flag any use of unsafe or raw pointer manipulation.
+EOF
+```
 
-`#EXPLAIN` can be combined with behaviors (`#EXPLAIN #=code #deep`) or used alone to explain the currently active set. Cannot be combined with `#CLEAR`.
+**Nesting.** Composites can compose other composites. `#EXPLAIN` shows the expansion tree.
 
-## Composition
+**Rules:**
+- Same namespace as behaviors — no special syntax
+- One operating mode after full expansion (same constraint as always)
+- `compose` file: single line of space-separated hashtags
+- State persists the composite name, not the expanded set
+- Cycle detection and depth limit (max 8) are enforced
 
-One mode + any behaviors: `#=code #deep #subtract`, `#=debug #bisect #deep`
-
-### Shipped composites
+#### Shipped composites
 
 Each mode has a capitalized composite that bundles a curated default methodology. Three tiers of usage:
 
@@ -183,6 +197,25 @@ Each mode has a capitalized composite that bundles a curated default methodology
 | `#Record`   | `#=record`                                         |
 
 Stack behaviors on top: `#Debug #deep`, `#Code #subtract`, `#Frame #factor`.
+
+### Output-Channel Modifiers
+
+Output-channel modifiers change where the output goes, not how the LLM thinks. They compose with any mode.
+
+| Hashtag  | Description                                              |
+|----------|----------------------------------------------------------|
+| `#file`  | Persist structured output to a named file across modes   |
+
+### Meta-Keywords
+
+Meta-keywords are not behaviors — they control the hook itself.
+
+| Keyword    | Description                                                   |
+|------------|---------------------------------------------------------------|
+| `#CLEAR`   | Deactivate all behaviors for the session                      |
+| `#EXPLAIN` | Explain what a behavior combo would do, without activating it |
+
+`#EXPLAIN` can be combined with behaviors (`#EXPLAIN #=code #deep`) or used alone to explain the currently active set. Cannot be combined with `#CLEAR`.
 
 ### Methodology composition
 
@@ -213,7 +246,6 @@ Modes define the interaction loop. Behaviors fill in the methodology. The same m
 | `#=design #first-principles`          | Derive candidates from constraints, not patterns |
 | `#=test #boundary #deep`              | Exhaustive boundary testing                      |
 | `#=debug #bisect #deep`               | Systematic bisection with deep investigation     |
-| `#=debug #simulate`                   | Trace exact execution state to find fault        |
 | `#=code #contract`                    | Pre/post/invariant on every function boundary    |
 | `#=research #epistemic #deep #wide`   | Deep, broad investigation with epistemic rigor   |
 | `#=mentor #explain-first #deep`       | Deep teaching, explain → demonstrate → check     |
@@ -239,7 +271,7 @@ Removes the hook symlink and settings.json entry.
 
 ## Examples
 
-See the output-examples folder on generated python snake games with various frameworks/approaches.
+See the output-examples folder for generated python snake games with various frameworks/approaches.
 
 ## How it works
 
@@ -250,7 +282,7 @@ See the output-examples folder on generated python snake games with various fram
 5. Injects the content as ephemeral additional context
 6. The LLM follows the directives until the next prompt with hashtags replaces them
 
-## Relation to plan mode
+## Relation to Claude Code's plan mode
 
 I don't use plan mode (I have a hook that disables it). The operating mode pipeline — frame → research → design → spec → code — offers more granular phase control than plan mode's binary plan/implement split. Each mode has an explicit boundary (frame can't research, research can't recommend, design can't commit without your choice, spec can't implement), so you control exactly when the LLM shifts from thinking to building. You can also move up and down the modes, `#=record` it once fully specced etc.
 
@@ -280,37 +312,6 @@ behaviors/
 hooks/
 └── inject-behaviors.sh
 ```
-
-## Composites
-
-A composite is a named composition of behaviors. Instead of typing `#=review #deep #challenge #simulate` every time, define it once:
-
-```
-mkdir behaviors/security-reviewer
-echo "#=review #deep #challenge #simulate" > behaviors/security-reviewer/compose
-```
-
-Now `#security-reviewer` expands to all four behaviors. Stacking works — `#security-reviewer #concise` adds `#concise` on top.
-
-**Custom text.** Add a `prompt.md` alongside `compose` for directives that only apply within this composite:
-
-```
-mkdir behaviors/security-reviewer
-echo "#=review #deep #challenge #simulate" > behaviors/security-reviewer/compose
-cat > behaviors/security-reviewer/prompt.md << 'EOF'
-# #security-reviewer — Security Reviewer
-Prioritize OWASP Top 10. Flag any use of unsafe or raw pointer manipulation.
-EOF
-```
-
-**Nesting.** Composites can compose other composites. `#EXPLAIN` shows the expansion tree.
-
-**Rules:**
-- Same namespace as behaviors — no special syntax
-- One operating mode after full expansion (same constraint as always)
-- `compose` file: single line of space-separated hashtags
-- State persists the composite name, not the expanded set
-- Cycle detection and depth limit (max 8) are enforced
 
 ## Custom behaviors
 
@@ -351,7 +352,13 @@ Custom behaviors follow the same rules: one `prompt.md` with terse directives. A
 
 Q: There's plenty of CLAUDE.md / AGENTS.md files I can use for this, or I can write a skill, why would I use this?
 
-You'd write "When doing X follow these rules: ...". You are a) implicitly and b) unconditionally instructing the LLM. Implicit can fail silently - it's a soft request. Unconditional cannot be turned off. Hashtags solve both problems - invoke when needed and the built-ins never fail - I iterated on their language and the framework until it stopped failing. The work's done for you - write up in prose the behavior you want, then tell the LLM to translate it into the language of the builtins.
+I wanted to use these but none match the requirements:
+
+- invoke explicitly when needed
+- stick until next override
+- auto-reinforce on next prompt
+- consume context lazily
+- obey rules unconditionally
 
 ## Design
 
@@ -367,15 +374,19 @@ No configuration step. Behaviors are static. Tuning happens through combinations
 
 Behaviors are designed to be **orthogonal** — each controls an independent axis of variation. Any combination produces a coherent, non-contradictory result. No two behaviors do the same thing.
 
+## Failure modes
+
+LLMs operate on prose and as such can fail to follow our orders. The hashtags went through a lot of iterations. The operating modes don't fail me anymore. Some behaviors like `#bisect` are still flaky. If you encounter issues or have suggestions [please open an issue](https://github.com/xificurC/ai-behaviors/issues).
+
 ## FAQ
 
 **Does installing this change anything if I don't use hashtags?**
 
 No. The hook only activates when it sees `#hashtags` in your prompt. If you never use them, the LLM behaves exactly as it would without the hook installed.
 
-**Persisted hashtags mean I can lose state of which mode I'm in, how can I counter that?**
+**How can I quickly see what hashtags are active?**
 
-The hook persists the active hashtags in a session-scoped file. You can e.g. render it in the status line. Here's an example how to do it for Claude Code.
+Here's an example how to show the active hashtags in Claude Code's statusline, you can ask Claude to incorporate the snippet.
 
 ``` shell
 INPUT=$(cat)
@@ -393,6 +404,8 @@ if [ -f "$STATE_FILE" ]; then
   fi
 fi
 ```
+
+The hook persists the active hashtags in a session-scoped file. Other tools can read it too.
 
 **Will the active hashtags survive a compaction?**
 
