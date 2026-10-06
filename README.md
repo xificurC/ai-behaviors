@@ -29,6 +29,12 @@ Behaviors stick until replaced — a `#Code #decompose #first-principles` prompt
 
 Clone, then run `./install` for Claude Code, `./eca-install` for ECA. This symlinks a hook into your configuration. The hook reads behaviors directly from the repo — `git pull` updates everything.
 
+### Skill
+
+There is a possibility to use `ai-behaviors` as a skill in Claude Desktop (or other AI agent supporting skills). Just copy `skills/ai-behaviors` folder to a dedicated folder or upload `skills/ai-behaviors.zip` via GUI.
+
+Note: In a case where the behavior fades in a long chat, ask *"quote the active hard constraints"*. Claude should re-read the files. If it can't, send the tags again.
+
 ## Easy Start
 
 If you want to get a quick feel of how this works, then:
